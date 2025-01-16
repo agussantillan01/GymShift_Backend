@@ -22,7 +22,8 @@ using Newtonsoft.Json;
 using System.Text;
 using GymShift.Middlewares;
 using GymShift.Services;
-using Infrastructure.Contexts; 
+using Infrastructure.Contexts;
+using System.Diagnostics;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -205,7 +206,12 @@ var app = builder.Build();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Mi API v1");
+        c.RoutePrefix = string.Empty; // Esto hace que Swagger esté disponible en la raíz de la aplicación
+    });
+
 }
 
 app.UseCors(x => x
