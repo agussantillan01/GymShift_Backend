@@ -13,7 +13,6 @@
     <Folder Include="DBConnection\" />
     <Folder Include="Features\" />
     <Folder Include="Helpers\" />
-    <Folder Include="Models\" />
   </ItemGroup>
 
   <ItemGroup>
