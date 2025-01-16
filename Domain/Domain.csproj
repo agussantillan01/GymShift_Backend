@@ -9,9 +9,7 @@
   <ItemGroup>
     <Folder Include="Common\" />
     <Folder Include="Entities\" />
-    <Folder Include="EntitiesIdentity\" />
     <Folder Include="Interface\" />
-    <Folder Include="Wrappers\" />
     <Folder Include="Settings\" />
   </ItemGroup>
 
