@@ -1,0 +1,6 @@
+@GymShift_HostAddress = http://localhost:5219
+
+GET {{GymShift_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
