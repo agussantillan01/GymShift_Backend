@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Configuration\" />
     <Folder Include="Contexts\" />
-    <Folder Include="CustomIdentity\Interface\" />
     <Folder Include="DBConnection\" />
     <Folder Include="Features\" />
     <Folder Include="Helpers\" />
