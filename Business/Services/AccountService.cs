@@ -1,16 +1,24 @@
 ﻿using Business.DTOs.Account;
+using Business.Exceptions;
 using Business.Interfaces;
+using Domain.Entities;
+using Domain.EntitiesIdentity;
 using Domain.Settings;
 using Domain.Wrappers;
 using Infrastructure.Contexts;
 using Infrastructure.CustomIdentity.Interface;
+using Infrastructure.Helpers;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -23,27 +31,41 @@ namespace Business.Services
         private readonly JWTSettings _jwtSetting;
         private readonly UserManager<UsuarioLogin> _userManager;
         private readonly ApplicationDbContext _ApplicationDbContext;
-        //private readonly SignInManager<UsuarioLogin> _SingInManager;
+        private readonly SignInManager<UsuarioLogin> _SingInManager;
         #endregion
 
         #region Constructor
         public AccountService(ApplicationDbContext ApplicationDbContext,
                                 IActiveDirectoryManager activeDirectoryManager,
                                 UserManager<UsuarioLogin> userManager,
-                                IOptions<JWTSettings> jwtSetting
-                                //SignInManager<UsuarioLogin> SingInManager
+                                IOptions<JWTSettings> jwtSetting,
+                                SignInManager<UsuarioLogin> SingInManager
                                 )
         {
             _activeDirectoryManager = activeDirectoryManager;
             _ApplicationDbContext = ApplicationDbContext;
             _userManager = userManager;
             _jwtSetting = jwtSetting.Value;
-            //_SingInManager = SingInManager;
+            _SingInManager = SingInManager;
         }
         #endregion 
-        public Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
+        public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
         {
-            throw new NotImplementedException();
+            var users = await _ApplicationDbContext.Usuarios.ToListAsync();
+            var user = await GetUsuario(request);
+            JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
+            var refreshToken = GenerateRefreshToken(ipAddress, user.Id);
+            await UpdateRefreshToken(refreshToken);
+
+            AuthenticationResponse response = new AuthenticationResponse();
+            response.Id = user.Id.ToString();
+            response.Email = user.Email;
+            response.IsVerified = true;
+            response.RefreshToken = refreshToken.Token;
+            response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
+            response.ExpireDate = jwtSecurityToken.ValidTo.ToLocalTime();
+
+            return new Response<AuthenticationResponse>(response, $"{user.Email.Trim()} autenticado");
         }
 
         public Task<Response<string>> ConfirmEmailAsync(string userId, string code)
@@ -61,9 +83,15 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-        public Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
+        public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
         {
-            throw new NotImplementedException();
+            var user = await _userManager.FindByEmailAsync(request.Email);
+            if (user == null)
+            {
+                throw new ApiException("Email y/o contraseña incorrecta");
+            }
+            await validarLogin(request, user);
+            return user;
         }
 
         public Task<UsuarioLogin> GetUsuarioXId(int id)
@@ -76,14 +104,108 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-        public Task<Response<string>> RegisterAsync(RegisterRequest request, string origin)
+        public async Task<Response<string>> RegisterAsync(RegisterRequest request, string origin)
         {
-            throw new NotImplementedException();
+            var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
+            if (userWithSameUserName != null)
+            {
+                throw new ApiException($"El mail '{request.UserName}' ya se encuentra tomado.");
+            }
+            var user = new UsuarioLogin
+            {
+                Email = request.Email,
+                Nombre = request.FirstName,
+                Apellido = request.LastName,
+                UserName = request.UserName,
+                NormalizedEmail = request.Email.ToUpper(),
+                NormalizedUserName = request.UserName.ToUpper()
+            };
+
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
+            var result = await _userManager.CreateAsync(user, request.Password);
+            if (result.Succeeded)
+                return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
+            else
+                throw new ApiException($"{result.Errors}");
         }
 
         public Task<Response<string>> ResetPassword(ResetPasswordRequest model)
         {
             throw new NotImplementedException();
         }
+
+
+        #region metodosPrivados 
+        private async Task<JwtSecurityToken> GenerateJWToken(UsuarioLogin user)
+        {
+            string ipAddress = IpHelper.GetIpAddress();
+
+            var claims = new[]
+            {
+                 new Claim(JwtRegisteredClaimNames.Sub, user.UserName.Trim()),
+                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                 new Claim(JwtRegisteredClaimNames.Email, user.Email.Trim()),
+                 new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName.Trim()),
+                 new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.UserName.Trim()),
+                 new Claim("uid", user.Id.ToString()),
+                 new Claim("userSistema", user.EsUserSistema.ToString()),
+                 new Claim("ip", ipAddress),
+                 //new Claim("idEmpresa", idEmpresa.Trim())
+            };
+
+            //var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key.PadRight(256)));
+            var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSetting.Key));
+            var signingCredentials = new SigningCredentials(symmetricSecurityKey, SecurityAlgorithms.HmacSha256);
+
+            var jwtSecurityToken = new JwtSecurityToken(
+                issuer: _jwtSetting.Issuer,
+                audience: _jwtSetting.Audience,
+                claims: claims,
+                expires: DateTime.UtcNow.AddMinutes(_jwtSetting.DurationInMinutes),
+                signingCredentials: signingCredentials);
+
+            return jwtSecurityToken;
+        }
+        private async Task validarLogin(AuthenticationRequest request, UsuarioLogin usuario)
+        {
+            if (!_activeDirectoryManager.UsaActiveDirectory(usuario.NormalizedUserName))
+            {
+                var result = await _SingInManager.CheckPasswordSignInAsync(usuario, request.Password.Trim(), lockoutOnFailure: false);
+                if (!result.Succeeded)
+                {
+                    throw new ApiException("Usuario y/o contraseña incorrecta.");
+                }
+
+            }
+            else
+            {
+                _activeDirectoryManager.Login(usuario.Email, request.Password);
+            }
+        }
+        private RefreshToken GenerateRefreshToken(string ipAdress, int user)
+        {
+            return new RefreshToken
+            {
+                Token = RandomTokenStrin(),
+                Expires = DateTime.UtcNow.AddDays(7),
+                Created = DateTime.UtcNow,
+                UsuarioId = user,
+                CreatedByIp = ipAdress
+            };
+        }
+
+        private string RandomTokenStrin()
+        {
+            using var rngCryptoServiceProvider = new RNGCryptoServiceProvider();
+            var randomBytes = new byte[40];
+            rngCryptoServiceProvider.GetBytes(randomBytes);
+            return BitConverter.ToString(randomBytes).Replace("-", "");
+        }
+
+        private async Task UpdateRefreshToken(RefreshToken refreshToken, string ultimoToken = "")
+        {
+            //var vencidos = await _ApplicationDbContext.RefreshTokens = 
+        }
+        #endregion
     }
 }

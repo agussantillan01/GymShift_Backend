@@ -1,4 +1,5 @@
-﻿using Infrastructure.Models;
+﻿using Infrastructure.Configuration;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using System;
@@ -25,5 +26,16 @@ namespace Infrastructure.Contexts
         public DbSet<Permiso> Permisos { get; set; }
 
         #endregion
+
+
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+=> optionsBuilder.UseLoggerFactory(logger);
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+            //llamo a los Configurations
+            modelBuilder.ApplyConfiguration(new UsuarioLoginConfiguration());
+        }
     }
 }
