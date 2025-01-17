@@ -8,6 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business.Services.Usuarios;
+using Infrastructure.Contexts;
 
 namespace Business
 {
@@ -16,9 +18,8 @@ namespace Business
         public static void AddBusinessLayer(this IServiceCollection services)
         {
             services.AddScoped<IAccountService, AccountService>();
-
-            //services.AddScoped<IUserRoleService, UserRoleService>
-
+            services.AddScoped<ApplicationDbContext>();
+            services.AddScoped<UsuarioServiceAsync>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IActiveDirectoryManager, ActiveDirectoryManager>();
             services.AddTransient<IApplicationUserStore, ApplicationUserStore>();

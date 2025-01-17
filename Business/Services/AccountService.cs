@@ -85,7 +85,7 @@ namespace Business.Services
 
         public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Email);
+            var user = await _userManager.FindByEmailAsync(request.usuario);
             if (user == null)
             {
                 throw new ApiException("Email y/o contraseña incorrecta");
@@ -170,7 +170,7 @@ namespace Business.Services
         {
             if (!_activeDirectoryManager.UsaActiveDirectory(usuario.NormalizedUserName))
             {
-                var result = await _SingInManager.CheckPasswordSignInAsync(usuario, request.Password.Trim(), lockoutOnFailure: false);
+                var result = await _SingInManager.CheckPasswordSignInAsync(usuario, request.password.Trim(), lockoutOnFailure: false);
                 if (!result.Succeeded)
                 {
                     throw new ApiException("Usuario y/o contraseña incorrecta.");
@@ -179,7 +179,7 @@ namespace Business.Services
             }
             else
             {
-                _activeDirectoryManager.Login(usuario.Email, request.Password);
+                _activeDirectoryManager.Login(usuario.Email, request.password);
             }
         }
         private RefreshToken GenerateRefreshToken(string ipAdress, int user)

@@ -45,7 +45,15 @@ builder.Services.AddScoped<IAuthenticatedUserService, AuthenticatedUserService>(
 //builder.Services.AddIdentity<UsuarioLogin, IdentityRole<int>>() // Asegúrate de usar el tipo correcto para UsuarioLogin
 //    .AddEntityFrameworkStores<ApplicationDbContext>()
 //    .AddDefaultTokenProviders();
-
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowAll", policy =>
+    {
+        policy.AllowAnyOrigin()  // Permite cualquier origen (frontend)
+              .AllowAnyMethod()  // Permite cualquier método HTTP (GET, POST, etc.)
+              .AllowAnyHeader(); // Permite cualquier encabezado
+    });
+});
 
 builder.Services.AddIdentity<UsuarioLogin, Grupo>(x =>
 {

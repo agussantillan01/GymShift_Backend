@@ -1,5 +1,7 @@
 ﻿using Business.DTOs.Account;
 using Business.Interfaces;
+using Business.Services.Usuarios;
+using Infrastructure.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GymShift.Controllers.Login
@@ -8,7 +10,6 @@ namespace GymShift.Controllers.Login
     {
         private readonly IAccountService _accountService;
         private readonly IConfiguration _configuration;
-
         public AuthController(IAccountService accountService, IConfiguration configuration)
         {
             _accountService = accountService;
@@ -26,7 +27,11 @@ namespace GymShift.Controllers.Login
         {
             return Ok(await _accountService.AuthenticateAsync(request, GenerateIPAdress()));
         }
-
+        [HttpPost("GetUsuario")]
+        public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
+        {
+            return await _accountService.GetUsuario(request);
+        }
 
         #region FuncionesPrivadas 
         private string GenerateIPAdress()
