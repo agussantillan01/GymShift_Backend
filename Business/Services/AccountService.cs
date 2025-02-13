@@ -64,7 +64,7 @@ namespace Business.Services
             response.RefreshToken = refreshToken.Token;
             response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             response.ExpireDate = jwtSecurityToken.ValidTo.ToLocalTime();
-
+            response.usuario = await GetUsuarioXId(user.Id);
             return new Response<AuthenticationResponse>(response, $"{user.Email.Trim()} autenticado");
         }
 
@@ -85,7 +85,7 @@ namespace Business.Services
 
         public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.usuario);
+            var user = await _userManager.FindByEmailAsync(request.Usuario);
             if (user == null)
             {
                 throw new ApiException("Email y/o contraseña incorrecta");
@@ -94,9 +94,16 @@ namespace Business.Services
             return user;
         }
 
-        public Task<UsuarioLogin> GetUsuarioXId(int id)
+        public async Task<Usuario> GetUsuarioXId(int id)
         {
-            throw new NotImplementedException();
+            var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x=> x.Id == id);
+            Usuario us = new Usuario();
+            us.Id = id;
+            us.Apellido = user.Apellido;
+            us.Nombre = user.Nombre;
+            us.Role = ["ADMIN"];
+            return  us;
+
         }
 
         public Task<Response<AuthenticationResponse>> RefreshToken(int userId, string refreshToken, string userName, string idEmpresa, string ip)
@@ -134,7 +141,6 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-
         #region metodosPrivados 
         private async Task<JwtSecurityToken> GenerateJWToken(UsuarioLogin user)
         {
@@ -170,7 +176,7 @@ namespace Business.Services
         {
             if (!_activeDirectoryManager.UsaActiveDirectory(usuario.NormalizedUserName))
             {
-                var result = await _SingInManager.CheckPasswordSignInAsync(usuario, request.password.Trim(), lockoutOnFailure: false);
+                var result = await _SingInManager.CheckPasswordSignInAsync(usuario, request.Password.Trim(), lockoutOnFailure: false);
                 if (!result.Succeeded)
                 {
                     throw new ApiException("Usuario y/o contraseña incorrecta.");
@@ -179,7 +185,7 @@ namespace Business.Services
             }
             else
             {
-                _activeDirectoryManager.Login(usuario.Email, request.password);
+                _activeDirectoryManager.Login(usuario.Email, request.Password);
             }
         }
         private RefreshToken GenerateRefreshToken(string ipAdress, int user)

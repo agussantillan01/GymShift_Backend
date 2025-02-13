@@ -1,4 +1,5 @@
 ﻿using Business.DTOs.Account;
+using Domain.Entities;
 using Domain.Wrappers;
 using Infrastructure.Models;
 using System;
@@ -21,6 +22,6 @@ namespace Business.Interfaces
         Task<Response<AuthenticationResponse>> RefreshToken(int userId, string refreshToken, string userName, string idEmpresa, string ip);
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
         Task<UsuarioLogin> GetUsuario(AuthenticationRequest request);
-        Task<UsuarioLogin> GetUsuarioXId(int id);
+        Task<Usuario> GetUsuarioXId(int id);
     }
 }

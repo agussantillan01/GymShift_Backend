@@ -23,7 +23,7 @@ namespace GymShift.Controllers.Login
             return Ok(await _accountService.RegisterAsync(request, origin));
         }
         [HttpPost("Authenticate")]
-        public async Task<IActionResult> Authenticate(AuthenticationRequest request)
+        public async Task<IActionResult> Authenticate([FromBody]AuthenticationRequest request)
         {
             return Ok(await _accountService.AuthenticateAsync(request, GenerateIPAdress()));
         }

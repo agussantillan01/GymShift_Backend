@@ -24,6 +24,7 @@ namespace Infrastructure.Contexts
         #region DataSets
         public DbSet<UsuarioLogin> Usuarios { get; set; }
         public DbSet<Permiso> Permisos { get; set; }
+        public DbSet<Role> Roles { get; set; }
 
         #endregion
 
@@ -36,6 +37,7 @@ namespace Infrastructure.Contexts
             base.OnModelCreating(modelBuilder);
             //llamo a los Configurations
             modelBuilder.ApplyConfiguration(new UsuarioLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new RoleConfiguration());
         }
     }
 }
