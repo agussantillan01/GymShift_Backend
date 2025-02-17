@@ -85,7 +85,7 @@ namespace Business.Services
 
         public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
         {
-            var user = await _userManager.FindByEmailAsync(request.Usuario);
+            var user = await _userManager.FindByNameAsync(request.Usuario);
             if (user == null)
             {
                 throw new ApiException("Email y/o contraseña incorrecta");
@@ -116,8 +116,15 @@ namespace Business.Services
             var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
             if (userWithSameUserName != null)
             {
-                throw new ApiException($"El mail '{request.UserName}' ya se encuentra tomado.");
+                throw new ApiException($"El usuario '{request.UserName}' ya se encuentra tomado.");
             }
+            userWithSameUserName = await _userManager.FindByEmailAsync(request.Email);
+            if (userWithSameUserName != null)
+            {
+                throw new ApiException($"El mail '{request.Email}' ya se encuentra tomado.");
+            }
+            
+
             var user = new UsuarioLogin
             {
                 Email = request.Email,
