@@ -101,8 +101,31 @@ namespace Business.Services
             us.Id = id;
             us.Apellido = user.Apellido;
             us.Nombre = user.Nombre;
-            us.Role = ["ADMIN"];
+            if (user.EsUserSistema)
+                us.Role = ["ADMIN"];
+            else us.Role = await ObtenerRolesXUsuario(id);
+
             return  us;
+
+        }
+
+        private async Task<string[]> ObtenerRolesXUsuario (int id)
+        {
+            string[] permisos = new string[1];
+            permisos = ["ADMIN"];
+
+
+            var permissions = await _ApplicationDbContext.Permisos.ToListAsync();
+            var Roles = await _ApplicationDbContext.Roles.ToListAsync(); 
+
+
+            var PermissionsXRol= await _ApplicationDbContext.PermisoXRol.ToListAsync();
+            var roleOfUser = await _ApplicationDbContext.UsuarioXRol.ToListAsync();
+
+
+            var usarioXRol = await _ApplicationDbContext.UsuarioXRol.ToListAsync();
+             
+            return permisos;
 
         }
 

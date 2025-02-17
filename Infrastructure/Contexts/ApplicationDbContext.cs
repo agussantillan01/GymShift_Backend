@@ -23,8 +23,10 @@ namespace Infrastructure.Contexts
 
         #region DataSets
         public DbSet<UsuarioLogin> Usuarios { get; set; }
-        public DbSet<Permiso> Permisos { get; set; }
         public DbSet<Role> Roles { get; set; }
+        public DbSet<Permiso> Permisos { get; set; }
+        public DbSet<PermisoXRol> PermisoXRol { get; set; }
+        public DbSet<UsuarioXRol> UsuarioXRol { get; set; }
 
         #endregion
 
@@ -38,6 +40,9 @@ namespace Infrastructure.Contexts
             //llamo a los Configurations
             modelBuilder.ApplyConfiguration(new UsuarioLoginConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
+            modelBuilder.ApplyConfiguration(new PermisoConfiguration());
+            modelBuilder.ApplyConfiguration(new PermisoXRolConfiguration());
+            modelBuilder.ApplyConfiguration(new UsuarioXRolConfiguration());
         }
     }
 }
