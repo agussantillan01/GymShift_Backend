@@ -17,6 +17,7 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security;
 using System.Security.Claims;
 using System.Security.Cryptography;
 using System.Text;
@@ -102,31 +103,59 @@ namespace Business.Services
             us.Apellido = user.Apellido;
             us.Nombre = user.Nombre;
             if (user.EsUserSistema)
+            {
                 us.Role = ["ADMIN"];
-            else us.Role = await ObtenerRolesXUsuario(id);
-
+                us.Permissions = await getAllPermissions();
+            }
+            else {
+                us.Role = await GetRolesXUsuario(id);
+                us.Permissions = await getPermissionsXRole(us.Role);
+            }
             return  us;
 
         }
 
-        private async Task<string[]> ObtenerRolesXUsuario (int id)
+        private async Task<string[]> getAllPermissions()
         {
-            string[] permisos = new string[1];
-            permisos = ["ADMIN"];
+            var permissionsDB = await _ApplicationDbContext.Permisos.ToListAsync();
+            return permissionsDB.Select(p => p.ClaimType).ToArray();
+        }
+        private async Task<string[]> getPermissionsXRole(string[] rolesTypes)
+        {
+            var roles = await _ApplicationDbContext.Roles
+                .Where(r => rolesTypes.Contains(r.Nombre.Trim()))
+                .ToListAsync();
 
+            var roleIds = roles.Select(r => r.Id).ToList();
 
-            var permissions = await _ApplicationDbContext.Permisos.ToListAsync();
-            var Roles = await _ApplicationDbContext.Roles.ToListAsync(); 
+            var permissionsDB = await _ApplicationDbContext.PermisoXRol
+                .Where(pxr => roleIds.Contains(pxr.IdRol))
+                .Select(pxr => pxr.Permiso.ClaimType) 
+                .Distinct() 
+                .ToArrayAsync(); 
 
+            return permissionsDB;
+        }
+        private async Task<string[]> GetRolesXUsuario(int id)
+        {
+            var IdsRoles = await _ApplicationDbContext.UsuarioXRol
+                .Where(x => x.IdUsuario == id)
+                .ToListAsync();
 
-            var PermissionsXRol= await _ApplicationDbContext.PermisoXRol.ToListAsync();
-            var roleOfUser = await _ApplicationDbContext.UsuarioXRol.ToListAsync();
+            var roles = new List<string>();
 
+            foreach (var item in IdsRoles)
+            {
+                var rol = await _ApplicationDbContext.Roles
+                    .FirstOrDefaultAsync(x => x.Id == item.IdRol);
 
-            var usarioXRol = await _ApplicationDbContext.UsuarioXRol.ToListAsync();
-             
-            return permisos;
+                if (rol != null)
+                {
+                    roles.Add(rol.Nombre); 
+                }
+            }
 
+            return roles.ToArray();
         }
 
         public Task<Response<AuthenticationResponse>> RefreshToken(int userId, string refreshToken, string userName, string idEmpresa, string ip)

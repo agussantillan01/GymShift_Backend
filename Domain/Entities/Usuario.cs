@@ -12,5 +12,6 @@ namespace Domain.Entities
         public string Nombre { get; set; }
         public string Apellido { get; set; }
         public  string[] Role { get; set; }
+        public string[] Permissions { get; set; }
     }
 }
