@@ -27,6 +27,7 @@ namespace Infrastructure.Contexts
         public DbSet<Permiso> Permisos { get; set; }
         public DbSet<PermisoXRol> PermisoXRol { get; set; }
         public DbSet<UsuarioXRol> UsuarioXRol { get; set; }
+        public DbSet<ServicioEmail> ServicioEmails { get; set; }
 
         #endregion
 
@@ -43,6 +44,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new PermisoConfiguration());
             modelBuilder.ApplyConfiguration(new PermisoXRolConfiguration());
             modelBuilder.ApplyConfiguration(new UsuarioXRolConfiguration());
+            modelBuilder.ApplyConfiguration(new ServicioEmailConfiguration());
         }
     }
 }

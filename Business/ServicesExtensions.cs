@@ -10,6 +10,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Business.Services.Usuarios;
 using Infrastructure.Contexts;
+using Business.Services.Email;
 
 namespace Business
 {
@@ -23,6 +24,7 @@ namespace Business
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IActiveDirectoryManager, ActiveDirectoryManager>();
             services.AddTransient<IApplicationUserStore, ApplicationUserStore>();
+            services.AddTransient<IServiceEmail, EmailService>();
 
         }
     }

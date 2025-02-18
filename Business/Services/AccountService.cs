@@ -1,6 +1,7 @@
 ﻿using Business.DTOs.Account;
 using Business.Exceptions;
 using Business.Interfaces;
+using Business.Services.Email;
 using Domain.Entities;
 using Domain.EntitiesIdentity;
 using Domain.Settings;
@@ -33,6 +34,7 @@ namespace Business.Services
         private readonly UserManager<UsuarioLogin> _userManager;
         private readonly ApplicationDbContext _ApplicationDbContext;
         private readonly SignInManager<UsuarioLogin> _SingInManager;
+        private readonly IServiceEmail _IserviceEmail;
         #endregion
 
         #region Constructor
@@ -40,7 +42,8 @@ namespace Business.Services
                                 IActiveDirectoryManager activeDirectoryManager,
                                 UserManager<UsuarioLogin> userManager,
                                 IOptions<JWTSettings> jwtSetting,
-                                SignInManager<UsuarioLogin> SingInManager
+                                SignInManager<UsuarioLogin> SingInManager,
+                                IServiceEmail IserviceEmail
                                 )
         {
             _activeDirectoryManager = activeDirectoryManager;
@@ -48,6 +51,7 @@ namespace Business.Services
             _userManager = userManager;
             _jwtSetting = jwtSetting.Value;
             _SingInManager = SingInManager;
+            _IserviceEmail = IserviceEmail;
         }
         #endregion 
         public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
@@ -175,7 +179,7 @@ namespace Business.Services
             {
                 throw new ApiException($"El mail '{request.Email}' ya se encuentra tomado.");
             }
-            
+
 
             var user = new UsuarioLogin
             {
@@ -187,14 +191,46 @@ namespace Business.Services
                 NormalizedUserName = request.UserName.ToUpper()
             };
 
+            request.Password = await GeneraClaveDesordenada(user.UserName); 
+
             user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
             var result = await _userManager.CreateAsync(user, request.Password);
             if (result.Succeeded)
+            {
+
+                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", request.Password, user.Nombre);
+
+
                 return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
+            }
             else
                 throw new ApiException($"{result.Errors}");
         }
 
+        private async Task<string> GeneraClaveDesordenada(string usuario)
+        {
+            Random random = new Random();
+
+            // Convertir la cadena en un array de caracteres
+            char[] caracteres = usuario.ToCharArray();
+
+            // Mezclar los caracteres aleatoriamente (Fisher-Yates shuffle)
+            for (int i = caracteres.Length - 1; i > 0; i--)
+            {
+                int j = random.Next(i + 1);
+                (caracteres[i], caracteres[j]) = (caracteres[j], caracteres[i]);
+            }
+
+            string clave = new string(caracteres);
+
+            // Asegurar que tenga al menos 8 caracteres
+            while (clave.Length < 8)
+            {
+                clave += random.Next(0, 10).ToString(); // Agregar números aleatorios si es necesario
+            }
+
+            return await Task.FromResult(clave);
+        }
         public Task<Response<string>> ResetPassword(ResetPasswordRequest model)
         {
             throw new NotImplementedException();
