@@ -29,9 +29,12 @@ namespace Business.Services.Usuarios
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<List<UsuarioLogin>> Obtener()
+        public async Task<List<UsuarioLogin>> ObtenerUsuarios(string userNameLogueado)
         {
-            return await _ApplicationDbContext.Usuarios.ToListAsync();
+            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == userNameLogueado);
+            var listUsers = await _ApplicationDbContext.Usuarios.Where(x => x.Id != usuarioLogueado.Id).ToListAsync();
+
+            return listUsers;
         }
     }
 }

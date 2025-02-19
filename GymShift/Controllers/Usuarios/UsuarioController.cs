@@ -22,7 +22,8 @@ namespace GymShift.Controllers.Usuarios
         [Authorize]
         public async Task<List<UsuarioLogin>> GetUsuarios()
         {
-            return await _UsuarioServiceAsync.Obtener();
+            var user= User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            return await _UsuarioServiceAsync.ObtenerUsuarios(user);
         }
 
 
