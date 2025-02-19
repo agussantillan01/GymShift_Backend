@@ -32,7 +32,16 @@ namespace Business.Services.Usuarios
         public async Task<List<UsuarioLogin>> ObtenerUsuarios(string userNameLogueado)
         {
             var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == userNameLogueado);
-            var listUsers = await _ApplicationDbContext.Usuarios.Where(x => x.Id != usuarioLogueado.Id).ToListAsync();
+            List<UsuarioLogin> listUsers = new List<UsuarioLogin>();
+            switch (usuarioLogueado.EsUserSistema)
+            {
+                case true:
+                    listUsers = await _ApplicationDbContext.Usuarios.Where(x => x.Id != usuarioLogueado.Id).ToListAsync();
+                    break;
+                default:
+                    listUsers = await _ApplicationDbContext.Usuarios.Where(x => x.Id != usuarioLogueado.Id && !x.EsUserSistema).ToListAsync();
+                break;
+            }
 
             return listUsers;
         }
