@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.DTOs.Usuarios;
+using Business.Interfaces;
 using Business.Services.Usuarios;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
@@ -20,10 +21,11 @@ namespace GymShift.Controllers.Usuarios
         }
         [HttpGet("GetUsuarios")]
         [Authorize]
-        public async Task<List<UsuarioLogin>> GetUsuarios()
+        public async Task<List<UsuarioView>> GetUsuarios(int pageNumber, int pageSize, string filter)
         {
+            filter = filter == null ? "" :filter.Trim(); 
             var user= User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            return await _UsuarioServiceAsync.ObtenerUsuarios(user);
+            return await _UsuarioServiceAsync.ObtenerUsuarios(user, pageNumber, pageSize, filter);
         }
 
 

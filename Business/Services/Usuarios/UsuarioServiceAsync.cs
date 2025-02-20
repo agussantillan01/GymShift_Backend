@@ -1,4 +1,5 @@
-﻿using Domain.Interface;
+﻿using Business.DTOs.Usuarios;
+using Domain.Interface;
 using Domain.Settings;
 using Infrastructure.Contexts;
 using Infrastructure.CustomIdentity.Interface;
@@ -29,21 +30,43 @@ namespace Business.Services.Usuarios
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<List<UsuarioLogin>> ObtenerUsuarios(string userNameLogueado)
+        public async Task<List<UsuarioView>> ObtenerUsuarios(string userNameLogueado, int pageNumber, int pageSize, string filter)
         {
-            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == userNameLogueado);
-            List<UsuarioLogin> listUsers = new List<UsuarioLogin>();
-            switch (usuarioLogueado.EsUserSistema)
+            var usuarioLogueado = await _ApplicationDbContext.Usuarios
+                .FirstOrDefaultAsync(x => x.UserName.Trim() == userNameLogueado);
+
+            if (usuarioLogueado == null)
+                return new List<UsuarioView>();
+
+            var query = _ApplicationDbContext.Usuarios
+                .Where(x => x.Id != usuarioLogueado.Id);
+
+            if (!usuarioLogueado.EsUserSistema)
+                query = query.Where(x => !x.EsUserSistema);
+
+            // Aplicar filtro si no está vacío o nulo
+            if (!string.IsNullOrWhiteSpace(filter))
             {
-                case true:
-                    listUsers = await _ApplicationDbContext.Usuarios.Where(x => x.Id != usuarioLogueado.Id).ToListAsync();
-                    break;
-                default:
-                    listUsers = await _ApplicationDbContext.Usuarios.Where(x => x.Id != usuarioLogueado.Id && !x.EsUserSistema).ToListAsync();
-                break;
+                string filterLower = filter.Trim().ToLower();
+                query = query.Where(x => x.Nombre.ToLower().Contains(filterLower) ||
+                                         x.Email.ToLower().Contains(filterLower));
             }
 
-            return listUsers;
+            var listUsers = await query
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            var lista =  listUsers.Select(item => new UsuarioView()
+            {
+                Id = item.Id,
+                Nombre = item.Nombre,
+                Email = item.Email ?? "No Contiene",
+                Rol = "Revisar"
+            }).ToList();
+            return lista;
         }
+
+
     }
 }
