@@ -1,4 +1,5 @@
 ﻿using Business.DTOs.Usuarios;
+using Domain.Entities;
 using Domain.Interface;
 using Domain.Settings;
 using Infrastructure.Contexts;
@@ -12,6 +13,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+
+using Domain.Wrappers;
+using Azure.Core;
+using Business.Exceptions;
+
 
 namespace Business.Services.Usuarios
 {
@@ -61,11 +67,47 @@ namespace Business.Services.Usuarios
             {
                 Id = item.Id,
                 Nombre = item.Nombre,
+                Apellido = item.Apellido,
                 Email = item.Email ?? "No Contiene",
-                Rol = "Revisar"
+                Rol = obtenerRol(item.Id)
             }).ToList();
             return lista;
         }
+
+
+        public async Task<Response<string>> Update(UsuarioView usuario) {
+
+            try
+            {
+                var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == usuario.Id);
+                user.Nombre = usuario.Nombre;
+                user.Apellido = usuario.Apellido;
+                usuario.Email = usuario.Email.Trim();
+                user.NormalizedEmail = usuario.Email.ToUpper().Trim();
+
+
+                _ApplicationDbContext.Usuarios.Update(user);
+                await _ApplicationDbContext.SaveChangesAsync();
+                return new Response<string>(usuario.Id.ToString(), message: $"Usuario Modificado.");
+            }
+            catch (Exception ex)
+            {
+
+                throw new ApiException($"Ocurrió un error al modificar el usuario");
+            }
+
+        }
+
+        #region funcionesPrivadas 
+
+        private string obtenerRol(int id)
+        {
+            var userXRol = _ApplicationDbContext.UsuarioXRol.FirstOrDefault(x => x.IdUsuario == id);
+            var rol = _ApplicationDbContext.Roles.FirstOrDefault(x=> x.Id == userXRol.IdRol);
+            
+            return rol.Nombre.ToLower();
+        }
+        #endregion
 
 
     }
