@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using Business.Services.Usuarios;
 using Infrastructure.Contexts;
 using Business.Services.Email;
+using Business.Services.Actividades;
 
 namespace Business
 {
@@ -21,6 +22,7 @@ namespace Business
             services.AddScoped<IAccountService, AccountService>();
             services.AddScoped<ApplicationDbContext>();
             services.AddScoped<UsuarioServiceAsync>();
+            services.AddScoped<TipoEventoServiceAsync>();
             services.AddTransient<IAccountService, AccountService>();
             services.AddTransient<IActiveDirectoryManager, ActiveDirectoryManager>();
             services.AddTransient<IApplicationUserStore, ApplicationUserStore>();

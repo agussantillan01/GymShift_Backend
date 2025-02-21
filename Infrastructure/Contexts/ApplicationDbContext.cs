@@ -28,6 +28,7 @@ namespace Infrastructure.Contexts
         public DbSet<PermisoXRol> PermisoXRol { get; set; }
         public DbSet<UsuarioXRol> UsuarioXRol { get; set; }
         public DbSet<ServicioEmail> ServicioEmails { get; set; }
+        public DbSet<TipoEvento> TiposDeEventos { get; set; }
 
         #endregion
 
@@ -45,6 +46,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new PermisoXRolConfiguration());
             modelBuilder.ApplyConfiguration(new UsuarioXRolConfiguration());
             modelBuilder.ApplyConfiguration(new ServicioEmailConfiguration());
+            modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());
         }
     }
 }
