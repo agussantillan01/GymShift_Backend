@@ -18,10 +18,14 @@ namespace Business.DTOs.Account
         public string Email { get; set; }
         [Required]
         public string UserName { get; set; }
-        [Required]
-        public string Password { get; set; }
-        [Required]
-        [Compare("Password")]
-        public string ConfirmPassword { get; set; }
+        //[Required]
+        //public string Password { get; set; }
+        //[Required]
+        //[Compare("Password")]
+        //public string ConfirmPassword { get; set; }
+
+        public string Rol { get; set; } 
+        public List<string> Acividades { get; set; }
+
     }
 }

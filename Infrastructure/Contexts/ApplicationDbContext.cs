@@ -29,6 +29,7 @@ namespace Infrastructure.Contexts
         public DbSet<UsuarioXRol> UsuarioXRol { get; set; }
         public DbSet<ServicioEmail> ServicioEmails { get; set; }
         public DbSet<TipoEvento> TiposDeEventos { get; set; }
+        public DbSet<ActividadesXEntrenador> ActividadesXEntrenador { get; set; }
 
         #endregion
 
@@ -38,6 +39,11 @@ namespace Infrastructure.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<UsuarioXRol>(entity =>
+            {
+                entity.Property(e => e.Id)
+                      .ValueGeneratedOnAdd();
+            });
             base.OnModelCreating(modelBuilder);
             //llamo a los Configurations
             modelBuilder.ApplyConfiguration(new UsuarioLoginConfiguration());
@@ -47,6 +53,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new UsuarioXRolConfiguration());
             modelBuilder.ApplyConfiguration(new ServicioEmailConfiguration());
             modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());
+            modelBuilder.ApplyConfiguration(new ActividadesXEntrenadorConfiguration());
         }
     }
 }

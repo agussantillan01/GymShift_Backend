@@ -101,7 +101,7 @@ namespace Business.Services
 
         public async Task<Usuario> GetUsuarioXId(int id)
         {
-            var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x=> x.Id == id);
+            var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
             Usuario us = new Usuario();
             us.Id = id;
             us.Apellido = user.Apellido;
@@ -111,11 +111,12 @@ namespace Business.Services
                 us.Role = ["ADMIN"];
                 us.Permissions = await getAllPermissions();
             }
-            else {
+            else
+            {
                 us.Role = await GetRolesXUsuario(id);
                 us.Permissions = await getPermissionsXRole(us.Role);
             }
-            return  us;
+            return us;
 
         }
 
@@ -134,9 +135,9 @@ namespace Business.Services
 
             var permissionsDB = await _ApplicationDbContext.PermisoXRol
                 .Where(pxr => roleIds.Contains(pxr.IdRol))
-                .Select(pxr => pxr.Permiso.ClaimType) 
-                .Distinct() 
-                .ToArrayAsync(); 
+                .Select(pxr => pxr.Permiso.ClaimType)
+                .Distinct()
+                .ToArrayAsync();
 
             return permissionsDB;
         }
@@ -155,7 +156,7 @@ namespace Business.Services
 
                 if (rol != null)
                 {
-                    roles.Add(rol.Nombre); 
+                    roles.Add(rol.Nombre);
                 }
             }
 
@@ -167,18 +168,36 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-        public async Task<Response<string>> RegisterAsync(RegisterRequest request, string origin)
+        private async Task ValidarRegisterUser(RegisterRequest request, List<ValidationException> validations)
         {
+
+            var validationExceptions = new ValidationException();
+
             var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
             if (userWithSameUserName != null)
             {
-                throw new ApiException($"El usuario '{request.UserName}' ya se encuentra tomado.");
+                validationExceptions.Errors.Add($"El usuario '{request.UserName}' ya se encuentra tomado.");
             }
             userWithSameUserName = await _userManager.FindByEmailAsync(request.Email);
             if (userWithSameUserName != null)
             {
-                throw new ApiException($"El mail '{request.Email}' ya se encuentra tomado.");
+                //validationExceptions.Errors.Add($"El mail '{request.Email}' ya se encuentra tomado.");
             }
+            if (request.Rol.Trim().ToUpper() == "COACH" && (request.Acividades == null ||request.Acividades.Count == 0 ))
+            {
+                validationExceptions.Errors.Add($"El Coach debe tener por lo menos 1 activadad asignada.");
+            }
+
+            if (validationExceptions.Errors.Count() > 0)
+            {
+                throw validationExceptions; 
+            }
+
+        }
+        public async Task<Response<string>> RegisterAsync(RegisterRequest request, string origin)
+        {
+            List<ValidationException> validations = new List<ValidationException>();
+            await ValidarRegisterUser(request, validations);
 
 
             var user = new UsuarioLogin
@@ -191,14 +210,14 @@ namespace Business.Services
                 NormalizedUserName = request.UserName.ToUpper()
             };
 
-            request.Password = await GeneraClaveDesordenada(user.UserName); 
+            string PasswordDesordenada = await GeneraClaveDesordenada(user.UserName);
 
-            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, request.Password);
-            var result = await _userManager.CreateAsync(user, request.Password);
+            user.PasswordHash = _userManager.PasswordHasher.HashPassword(user, PasswordDesordenada);
+            var result = await _userManager.CreateAsync(user, PasswordDesordenada);
             if (result.Succeeded)
             {
-
-                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", request.Password, user.Nombre);
+                await SeteoRolActividades(user.Id, request.Rol, request.Acividades);
+                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, user.Nombre);
 
 
                 return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
@@ -207,6 +226,48 @@ namespace Business.Services
                 throw new ApiException($"{result.Errors}");
         }
 
+        private async Task SeteoRolActividades(int newId, string rol, List<string> actividades) {
+            var borrar = await _ApplicationDbContext.ActividadesXEntrenador.ToListAsync();
+            await InsertRole(newId, rol);
+            await InsertActivdades(actividades, newId);
+        }
+        private async Task InsertRole( int newId, string rol)
+        {
+            var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == rol.Trim().ToUpper());
+
+            UsuarioXRol usXrol = new UsuarioXRol()
+            {
+                IdRol = role.Id,
+                IdUsuario = newId
+            };
+
+            await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);
+            await _ApplicationDbContext.SaveChangesAsync();
+        }
+        private async Task InsertActivdades(List<string> actividades, int newId)
+        {
+               List<TipoEvento> listEvents = new List<TipoEvento>();
+            foreach (var item in actividades)
+            {
+                var Tipo = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == item);
+                listEvents.Add(Tipo);
+            }
+            List<ActividadesXEntrenador> listaAInsertar = new List<ActividadesXEntrenador>();
+
+            foreach (var item in listEvents)
+            {
+                ActividadesXEntrenador actXCoach = new ActividadesXEntrenador()
+                {
+                    IdUsuario= newId, 
+                    IdActividad= item.Id
+                };
+                listaAInsertar.Add(actXCoach);
+
+            }
+           
+            await _ApplicationDbContext.ActividadesXEntrenador.AddRangeAsync(listaAInsertar);
+            await _ApplicationDbContext.SaveChangesAsync();
+        }
         private async Task<string> GeneraClaveDesordenada(string usuario)
         {
             Random random = new Random();
