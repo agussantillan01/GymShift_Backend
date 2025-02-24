@@ -25,9 +25,14 @@ namespace Business.Services.Email
             _applicationDbContext = applicationDbContext;
         }
 
-        private string BODY_BIENVENIDA = @"<p>Estimado/a,</p><p>Le damos la bienvenida a <strong>GymShift</strong>!! 💪🏽</p><p>El motivo del correo es para comunicarle que su clave es: <strong>[CLAVE]</strong></p><p>Le sugerimos modificar la clave por la que usted desee.</p><p>Atentamente,<br><strong>El equipo de GymShift 😊</strong></p>";
+        private string BODY_BIENVENIDA = @"
+<p>Estimado/a,</p>
+<p>Le damos la bienvenida a <strong>GymShift</strong>!! 💪🏽</p>
+<p>El motivo del correo es para comunicarle que su Usuario es: <strong>[USUARIO]</strong> y su clave es: <strong>[CLAVE]</strong></p>
+<p>Le sugerimos modificar la clave por la que usted desee.</p>
+<p>Atentamente,<br><strong>El equipo de GymShift 😊</strong></p>";
         private const string MAIL_WELCOME = "EMAIL_BIENVENIDA";
-        public async Task EnvioMail(string emailReceptor, string constAsunto, string clave, string nombre)
+        public async Task EnvioMail(string emailReceptor, string constAsunto, string clave, string usuario, string nombre)
         {
             var emailEmisor = _configuration.GetValue<string>("CONFIGURACIONES_EMAIL:EMAIL");
             var password = _configuration.GetValue<string>("CONFIGURACIONES_EMAIL:PASSWORD");
@@ -40,7 +45,8 @@ namespace Business.Services.Email
             smtpCliente.UseDefaultCredentials = false;
             smtpCliente.Credentials = new NetworkCredential(emailEmisor, password);
 
-            string bodyConClave = BODY_BIENVENIDA.Replace("[CLAVE]", clave);
+            string bodyConClave = BODY_BIENVENIDA.Replace("[USUARIO]", usuario)
+            .Replace("[CLAVE]", clave);
 
             var mensaje = new MailMessage
             {

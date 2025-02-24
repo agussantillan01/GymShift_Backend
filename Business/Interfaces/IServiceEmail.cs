@@ -8,6 +8,6 @@ namespace Business.Interfaces
 {
     public interface IServiceEmail
     {
-        Task EnvioMail(string emailReceptor, string constAsunto, string clave, string nombre);
+        Task EnvioMail(string emailReceptor, string constAsunto, string clave, string usuario, string nombre);
     }
 }

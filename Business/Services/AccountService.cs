@@ -172,7 +172,8 @@ namespace Business.Services
         {
 
             var validationExceptions = new ValidationException();
-
+            var userName = request.UserName.Split("@");
+            request.UserName = userName[0];
             var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
             if (userWithSameUserName != null)
             {
@@ -217,7 +218,7 @@ namespace Business.Services
             if (result.Succeeded)
             {
                 await SeteoRolActividades(user.Id, request.Rol, request.Actividades);
-                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, user.Nombre);
+                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, request.UserName, user.Nombre);
 
 
                 return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
