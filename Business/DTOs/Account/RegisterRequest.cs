@@ -25,7 +25,7 @@ namespace Business.DTOs.Account
         //public string ConfirmPassword { get; set; }
 
         public string Rol { get; set; } 
-        public List<string> Acividades { get; set; }
+        public List<string> Actividades { get; set; }
 
     }
 }

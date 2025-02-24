@@ -183,7 +183,7 @@ namespace Business.Services
             {
                 //validationExceptions.Errors.Add($"El mail '{request.Email}' ya se encuentra tomado.");
             }
-            if (request.Rol.Trim().ToUpper() == "COACH" && (request.Acividades == null ||request.Acividades.Count == 0 ))
+            if (request.Rol.Trim().ToUpper() == "COACH" && (request.Actividades == null ||request.Actividades.Count == 0 ))
             {
                 validationExceptions.Errors.Add($"El Coach debe tener por lo menos 1 activadad asignada.");
             }
@@ -216,7 +216,7 @@ namespace Business.Services
             var result = await _userManager.CreateAsync(user, PasswordDesordenada);
             if (result.Succeeded)
             {
-                await SeteoRolActividades(user.Id, request.Rol, request.Acividades);
+                await SeteoRolActividades(user.Id, request.Rol, request.Actividades);
                 await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, user.Nombre);
 
 
@@ -227,46 +227,66 @@ namespace Business.Services
         }
 
         private async Task SeteoRolActividades(int newId, string rol, List<string> actividades) {
-            var borrar = await _ApplicationDbContext.ActividadesXEntrenador.ToListAsync();
             await InsertRole(newId, rol);
-            await InsertActivdades(actividades, newId);
+            await InsertActivdades(actividades, newId, rol);
         }
         private async Task InsertRole( int newId, string rol)
         {
-            var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == rol.Trim().ToUpper());
-
-            UsuarioXRol usXrol = new UsuarioXRol()
+            try
             {
-                IdRol = role.Id,
-                IdUsuario = newId
-            };
+                var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == rol.Trim().ToUpper());
 
-            await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);
-            await _ApplicationDbContext.SaveChangesAsync();
-        }
-        private async Task InsertActivdades(List<string> actividades, int newId)
-        {
-               List<TipoEvento> listEvents = new List<TipoEvento>();
-            foreach (var item in actividades)
-            {
-                var Tipo = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == item);
-                listEvents.Add(Tipo);
-            }
-            List<ActividadesXEntrenador> listaAInsertar = new List<ActividadesXEntrenador>();
-
-            foreach (var item in listEvents)
-            {
-                ActividadesXEntrenador actXCoach = new ActividadesXEntrenador()
+                UsuarioXRol usXrol = new UsuarioXRol()
                 {
-                    IdUsuario= newId, 
-                    IdActividad= item.Id
+                    IdRol = role.Id,
+                    IdUsuario = newId
                 };
-                listaAInsertar.Add(actXCoach);
+
+                await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);
+                await _ApplicationDbContext.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+        }
+        private async Task InsertActivdades(List<string> actividades, int newId, string rol)
+        {
+            try
+            {
+                if (rol.Trim().ToUpper() == "COACH")
+                {
+                    List<TipoEvento> listEvents = new List<TipoEvento>();
+                    foreach (var item in actividades)
+                    {
+                        var Tipo = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == item);
+                        listEvents.Add(Tipo);
+                    }
+                    List<ActividadesXEntrenador> listaAInsertar = new List<ActividadesXEntrenador>();
+
+                    foreach (var item in listEvents)
+                    {
+                        ActividadesXEntrenador actXCoach = new ActividadesXEntrenador()
+                        {
+                            IdUsuario = newId,
+                            IdActividad = item.Id
+                        };
+                        listaAInsertar.Add(actXCoach);
+
+                    }
+
+                    await _ApplicationDbContext.ActividadesXEntrenador.AddRangeAsync(listaAInsertar);
+                    await _ApplicationDbContext.SaveChangesAsync();
+                }
 
             }
-           
-            await _ApplicationDbContext.ActividadesXEntrenador.AddRangeAsync(listaAInsertar);
-            await _ApplicationDbContext.SaveChangesAsync();
+            catch (Exception e) 
+            {
+
+                throw e;
+            }
+
         }
         private async Task<string> GeneraClaveDesordenada(string usuario)
         {

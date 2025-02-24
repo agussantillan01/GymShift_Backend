@@ -17,7 +17,7 @@ namespace GymShift.Controllers.Login
         }
 
         [HttpPost("Register")]
-        public async Task<IActionResult> Register(RegisterRequest request)
+        public async Task<IActionResult> Register([FromBody] RegisterRequest request)
         {
             var origin = Request.Headers["origin"];
             return Ok(await _accountService.RegisterAsync(request, origin));
