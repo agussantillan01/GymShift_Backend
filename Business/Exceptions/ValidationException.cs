@@ -8,21 +8,29 @@ namespace Business.Exceptions
 {
     public class ValidationException : Exception
     {
-        public ValidationException() : base("Ocurrieron uno o más errores de validacion.")
-        {
-            Errors = new List<string>();
+        public List<string> Errors { get; } = new List<string>();
 
+        public ValidationException() : base("Ocurrieron uno o más errores de validación.")
+        {
         }
-        public List<string> Errors { get; }
-        public List<ValidationException> ValidationFailures { get; set; }
 
-        public ValidationException(IEnumerable<ValidationException> failures) : this()
+        public ValidationException(string message) : base(message)
         {
-            foreach (var failure in failures)
-            {
-                Errors.Add(failure.Message);
-            }
-            ValidationFailures = failures.ToList();
+            Errors.Add(message);
+        }
+
+        public ValidationException(IEnumerable<string> errors) : this()
+        {
+            Errors.AddRange(errors);
+        }
+
+        public void AddError(string error)
+        {
+            Errors.Add(error);
+        }
+        public override string ToString()
+        {
+            return $"{base.ToString()}, Errores: {string.Join("; ", Errors)}";
         }
     }
 }

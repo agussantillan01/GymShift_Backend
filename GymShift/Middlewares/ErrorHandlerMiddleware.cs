@@ -1,8 +1,6 @@
 ﻿using Business.Exceptions;
 using Domain.Wrappers;
 using Newtonsoft.Json;
-using Serilog;
-using System.Diagnostics;
 using System.Net;
 
 namespace GymShift.Middlewares
@@ -10,10 +8,12 @@ namespace GymShift.Middlewares
     public class ErrorHandlerMiddleware
     {
         private readonly RequestDelegate _next;
+        private readonly ILogger<ErrorHandlerMiddleware> _logger;
 
-        public ErrorHandlerMiddleware(RequestDelegate next)
+        public ErrorHandlerMiddleware(RequestDelegate next, ILogger<ErrorHandlerMiddleware> logger)
         {
             _next = next;
+            _logger = logger;
         }
 
         public async Task Invoke(HttpContext context)
@@ -26,38 +26,39 @@ namespace GymShift.Middlewares
             {
                 var response = context.Response;
                 response.ContentType = "application/json";
-                var responseModel = new Response<string>() { Succeeded = false, Message = error?.Message };
-                var stacktrace = new StackTrace();
-                var message = stacktrace.GetFrame(1).GetMethod().Name + " - " + error.Message;
+
+                var responseModel = new Response<string>
+                {
+                    Succeeded = false,
+                    Message = "Ha ocurrido un error inesperado. Por favor, Comuniquese."
+                };
 
                 switch (error)
                 {
-                    case Business.Exceptions.ApiException e:
-                    case ValidationException ex:
-                        // custom application error
+                    case ApiException ex:
                         response.StatusCode = (int)HttpStatusCode.BadRequest;
-                        Log.Information(message);
+                        responseModel.Message = ex.Message;
+                        _logger.LogWarning($"API Error: {ex.Message}");
                         break;
-                    //case ValidationException e:
-                    //    // custom application error
-                    //    response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    //    responseModel.Errors = e.Errors;
-                    //    message = e.Errors != null ? message + JsonConvert.SerializeObject(e.Errors) : message;
-                    //    Log.Information(message);
-                    //    break;
-                    case KeyNotFoundException e:
-                        // not found error
+
+                    case ValidationException ex:
+                        response.StatusCode = (int)HttpStatusCode.BadRequest;
+                        responseModel.Message = "Se encontraron uno o más errores.";
+                        responseModel.Errors = ex.Errors; 
+                        _logger.LogWarning($"Validation Error: {ex.Message} - {JsonConvert.SerializeObject(ex.Errors)}");
+                        break;
+
+                    case KeyNotFoundException ex:
                         response.StatusCode = (int)HttpStatusCode.NotFound;
-                        Log.Information(message);
+                        responseModel.Message = "El recurso solicitado no fue encontrado.";
+                        _logger.LogInformation($"Not Found: {ex.Message}");
                         break;
+
                     default:
-                        // unhandled error
                         response.StatusCode = (int)HttpStatusCode.InternalServerError;
-                        responseModel.Message = "Ha ocurrido un error al intentar realizar la operación. Por favor comuníquese con nosotros.";
-                        Log.Error(error, message);
+                        _logger.LogError(error, "Unhandled Exception: " + error.Message);
                         break;
                 }
-
 
                 var result = JsonConvert.SerializeObject(responseModel);
                 await response.WriteAsync(result);

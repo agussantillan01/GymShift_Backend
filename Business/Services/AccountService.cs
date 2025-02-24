@@ -168,37 +168,37 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-        private async Task ValidarRegisterUser(RegisterRequest request, List<ValidationException> validations)
+        private async Task ValidarRegisterUser(RegisterRequest request, List<string> validationErrors)
         {
+            var userName = request.UserName.Split("@")[0];
+            request.UserName = userName;
 
-            var validationExceptions = new ValidationException();
-            var userName = request.UserName.Split("@");
-            request.UserName = userName[0];
-            var userWithSameUserName = await _userManager.FindByNameAsync(request.UserName);
-            if (userWithSameUserName != null)
+            if (await _userManager.FindByNameAsync(request.UserName) != null)
             {
-                validationExceptions.Errors.Add($"El usuario '{request.UserName}' ya se encuentra tomado.");
-            }
-            userWithSameUserName = await _userManager.FindByEmailAsync(request.Email);
-            if (userWithSameUserName != null)
-            {
-                //validationExceptions.Errors.Add($"El mail '{request.Email}' ya se encuentra tomado.");
-            }
-            if (request.Rol.Trim().ToUpper() == "COACH" && (request.Actividades == null ||request.Actividades.Count == 0 ))
-            {
-                validationExceptions.Errors.Add($"El Coach debe tener por lo menos 1 activadad asignada.");
+                validationErrors.Add($"El usuario '{request.UserName}' ya está en uso.");
             }
 
-            if (validationExceptions.Errors.Count() > 0)
+            if (await _userManager.FindByEmailAsync(request.Email) != null)
             {
-                throw validationExceptions; 
+                validationErrors.Add($"El email '{request.Email}' ya está en uso.");
             }
 
+            if (request.Rol.Trim().ToUpper() == "COACH" && (request.Actividades == null || request.Actividades.Count == 0))
+            {
+                validationErrors.Add("El Coach debe tener por lo menos 1 actividad asignada.");
+            }
+
+            if (validationErrors.Count > 0)
+            {
+                throw new ValidationException(validationErrors);
+            }
         }
+
+
         public async Task<Response<string>> RegisterAsync(RegisterRequest request, string origin)
         {
-            List<ValidationException> validations = new List<ValidationException>();
-            await ValidarRegisterUser(request, validations);
+            var validationErrors = new List<string>();
+            await ValidarRegisterUser(request, validationErrors);
 
 
             var user = new UsuarioLogin
@@ -224,7 +224,7 @@ namespace Business.Services
                 return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
             }
             else
-                throw new ApiException($"{result.Errors}");
+                throw new ValidationException(validationErrors);
         }
 
         private async Task SeteoRolActividades(int newId, string rol, List<string> actividades) {
