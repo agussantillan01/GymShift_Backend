@@ -119,7 +119,11 @@ namespace Business.Services
             return us;
 
         }
-
+        public async Task<List<Role>> GetRoles()
+        {
+            var list= await _ApplicationDbContext.Roles.Where(x=> x.Nombre.Trim().ToUpper() != "ADMIN").ToListAsync();
+            return list;
+        }
         private async Task<string[]> getAllPermissions()
         {
             var permissionsDB = await _ApplicationDbContext.Permisos.ToListAsync();

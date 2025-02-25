@@ -23,5 +23,6 @@ namespace Business.Interfaces
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
         Task<UsuarioLogin> GetUsuario(AuthenticationRequest request);
         Task<Usuario> GetUsuarioXId(int id);
+        Task<List<Role>> GetRoles();
     }
 }

@@ -32,6 +32,12 @@ namespace GymShift.Controllers.Login
         {
             return await _accountService.GetUsuario(request);
         }
+        
+        [HttpGet("GetRoles")]
+        public async Task<List<Role>> GetRoles()
+        {
+            return await _accountService.GetRoles();
+        }
 
         #region FuncionesPrivadas 
         private string GenerateIPAdress()

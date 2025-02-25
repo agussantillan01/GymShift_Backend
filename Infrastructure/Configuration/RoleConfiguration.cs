@@ -20,7 +20,7 @@ namespace Infrastructure.Configuration
               .HasColumnName("Rol").HasColumnType("varchar").HasMaxLength(500)
               .IsRequired();
 
-           builder.Ignore(r => r.permisosXrol);
+           //builder.Ignore(r => r.permisosXrol);
 
         }
     }

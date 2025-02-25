@@ -16,10 +16,10 @@ namespace Infrastructure.Configuration
             builder.ToTable("PermisosXRol");
             builder.HasKey(pr => new { pr.IdRol, pr.IdPermiso });
 
-            builder.HasOne(pr => pr.Rol)
-                           .WithMany(r => r.permisosXrol) // Un Rol tiene muchos PermisosXRol
-                           .HasForeignKey(pr => pr.IdRol) // Clave foránea
-                           .OnDelete(DeleteBehavior.Cascade);
+            //builder.HasOne(pr => pr.Rol)
+                           //.WithMany(r => r.permisosXrol) // Un Rol tiene muchos PermisosXRol
+                           //.HasForeignKey(pr => pr.IdRol) // Clave foránea
+                           //.OnDelete(DeleteBehavior.Cascade);
 
             // Relación uno a muchos entre PermisoXRol y Permiso
             builder.HasOne(pr => pr.Permiso)

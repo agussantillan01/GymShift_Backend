@@ -11,6 +11,6 @@ namespace Infrastructure.Models
         public int Id { get; set; }
         public string Nombre { get; set; }
 
-        public ICollection<PermisoXRol> permisosXrol { get; set; }
+        //public ICollection<PermisoXRol> permisosXrol { get; set; }
     }
 }
