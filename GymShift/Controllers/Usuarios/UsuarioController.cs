@@ -27,6 +27,12 @@ namespace GymShift.Controllers.Usuarios
             var user= User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             return await _UsuarioServiceAsync.ObtenerUsuarios(user, pageNumber, pageSize, filter);
         }
+        [HttpGet("GetUsuario")]
+        [Authorize]
+        public async Task<UsuarioEdit> GetUsuario(int IdUsuario)
+        {
+            return await _UsuarioServiceAsync.GetUsuario(IdUsuario);
+        }
         [HttpPost("Update")]
         [Authorize]
         public async Task<IActionResult> Update(UsuarioEdit us)
