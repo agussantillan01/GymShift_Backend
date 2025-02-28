@@ -75,17 +75,17 @@ namespace Business.Services.Usuarios
         }
 
 
-        public async Task<Response<string>> Update(UsuarioView usuario) {
+        public async Task<Response<string>> Update(UsuarioEdit usuario) {
 
             try
             {
                 var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == usuario.Id);
                 user.Nombre = usuario.Nombre;
                 user.Apellido = usuario.Apellido;
-                usuario.Email = usuario.Email.Trim();
+                user.Email = usuario.Email.Trim();
                 user.NormalizedEmail = usuario.Email.ToUpper().Trim();
 
-
+                await SeteoRolesYProfesiones(usuario.Id, usuario.Rol, usuario.Actividades);
                 _ApplicationDbContext.Usuarios.Update(user);
                 await _ApplicationDbContext.SaveChangesAsync();
                 return new Response<string>(usuario.Id.ToString(), message: $"Usuario Modificado.");
@@ -106,6 +106,102 @@ namespace Business.Services.Usuarios
             var rol = _ApplicationDbContext.Roles.FirstOrDefault(x=> x.Id == userXRol.IdRol);
             
             return rol.Nombre.ToLower();
+        }
+
+        private async Task SeteoRolesYProfesiones(int id, string rol, List<string> actividadaes)
+        {
+            try
+            {
+                await SeteoRol(id, rol);
+                var objRolNuevo = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == rol); //objeto del nuevo Rol
+                var rolDeUsuarioPrincipal = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == id);
+                var objRolAntes = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == rolDeUsuarioPrincipal.IdRol); // objeto rol viejo
+
+                if (objRolNuevo.Nombre.ToLower().Trim() == "coach" && objRolAntes.Nombre.ToLower().Trim() != "coach")
+                {
+                    //Actualizo el usuario, de usuario normal a entrenador
+                    await eliminoActividades(id);
+                }
+                else if (objRolNuevo.Nombre.ToLower().Trim() == "coach" && objRolAntes.Nombre.ToLower().Trim() == "coach")
+                {
+                    //Modifica usuario de entrenador a tipo entrenador, deberia modificar solamente las actividades
+                    await ActualizoActividades(id, actividadaes);
+                }
+                else if (objRolAntes.Nombre.ToLower().Trim() == "coach" && objRolNuevo.Nombre.ToLower().Trim() != "coach")
+                {
+                    //Modifica usuario entrenador a alumno
+                    await InsertActividades(id, actividadaes);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+
+        }
+        private async Task SeteoRol(int id, string rol)
+        {
+            string nombreRol = obtenerRol(id);
+            if (nombreRol == rol.ToLower().Trim())
+            {
+                return;
+            }
+            else
+            {
+                //elimino roles 
+                await EliminaRol(id, rol);
+                //InsertRoles
+                await InsertRoles(id, rol);
+            }
+        }
+        private async Task ActualizoActividades(int idUsuario, List<string> actividades)
+        {
+            //elimino actividades
+            await eliminoActividades(idUsuario);
+            //Inserta actividades 
+            await InsertActividades(idUsuario, actividades);
+        }
+        private async Task eliminoActividades(int idUsuario)
+        {
+            var actXus = await (_ApplicationDbContext.ActividadesXEntrenador.Where(x=> x.IdUsuario== idUsuario)).ToListAsync();
+            _ApplicationDbContext.ActividadesXEntrenador.RemoveRange(actXus);
+            await _ApplicationDbContext.SaveChangesAsync();
+        }
+        private async Task EliminaRol(int idUsuario, string nombreRol)
+        {
+            var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x=> x.Nombre.ToLower().Trim() == nombreRol.ToLower().Trim());
+            var userRol = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == idUsuario && x.IdRol== rol.Id);
+
+            _ApplicationDbContext.UsuarioXRol.Remove(userRol);
+            await _ApplicationDbContext.SaveChangesAsync();
+        }
+        private async Task InsertRoles(int idUsuario, string nombreRol)
+        {
+            var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x=> x.Nombre.ToLower().Trim() == nombreRol.ToLower().Trim());
+
+            UsuarioXRol usXrol = new UsuarioXRol();
+            usXrol.IdUsuario = idUsuario;
+            usXrol.IdRol = rol.Id;
+            await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);
+            await _ApplicationDbContext.SaveChangesAsync();
+        }
+        private async Task InsertActividades(int idUsuario, List<string> actividades)
+        {
+            List<ActividadesXEntrenador> listInsert = new List<ActividadesXEntrenador>();
+            foreach (var item in actividades)
+            {
+                var objActividad = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x=> x.Nombre.Trim().ToUpper() == item.Trim().ToUpper());
+                ActividadesXEntrenador actXEntrenador = new ActividadesXEntrenador();
+                actXEntrenador.IdUsuario = idUsuario;
+                actXEntrenador.IdActividad = objActividad.Id;
+
+                listInsert.Add(actXEntrenador);
+            }
+
+            await _ApplicationDbContext.ActividadesXEntrenador.AddRangeAsync(listInsert);
+            await _ApplicationDbContext.SaveChangesAsync();
         }
         #endregion
 
