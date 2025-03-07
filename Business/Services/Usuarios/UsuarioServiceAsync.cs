@@ -141,10 +141,11 @@ namespace Business.Services.Usuarios
         {
             try
             {
-                await SeteoRol(id, rol);
-                var objRolNuevo = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == rol); //objeto del nuevo Rol
                 var rolDeUsuarioPrincipal = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == id);
                 var objRolAntes = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == rolDeUsuarioPrincipal.IdRol); // objeto rol viejo
+                await SeteoRol(id, rol);
+                var objRolNuevo = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == rol); //objeto del nuevo Rol
+
 
                 if (objRolNuevo.Nombre.ToLower().Trim() == "coach" && objRolAntes.Nombre.ToLower().Trim() != "coach")
                 {
@@ -180,7 +181,7 @@ namespace Business.Services.Usuarios
             else
             {
                 //elimino roles 
-                await EliminaRol(id, rol);
+                await EliminaRol(id);
                 //InsertRoles
                 await InsertRoles(id, rol);
             }
@@ -195,13 +196,17 @@ namespace Business.Services.Usuarios
         private async Task eliminoActividades(int idUsuario)
         {
             var actXus = await (_ApplicationDbContext.ActividadesXEntrenador.Where(x => x.IdUsuario == idUsuario)).ToListAsync();
-            _ApplicationDbContext.ActividadesXEntrenador.RemoveRange(actXus);
-            await _ApplicationDbContext.SaveChangesAsync();
+            if (actXus.Count > 0)
+            {
+
+
+                _ApplicationDbContext.ActividadesXEntrenador.RemoveRange(actXus);
+                await _ApplicationDbContext.SaveChangesAsync();
+            }
         }
-        private async Task EliminaRol(int idUsuario, string nombreRol)
+        private async Task EliminaRol(int idUsuario)
         {
-            var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == nombreRol.ToLower().Trim());
-            var userRol = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == idUsuario && x.IdRol == rol.Id);
+            var userRol = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == idUsuario);
 
             _ApplicationDbContext.UsuarioXRol.Remove(userRol);
             await _ApplicationDbContext.SaveChangesAsync();
