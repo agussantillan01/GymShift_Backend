@@ -35,7 +35,7 @@ namespace GymShift.Controllers.Usuarios
         }
         [HttpPost("Update")]
         [Authorize]
-        public async Task<IActionResult> Update(UsuarioEdit us)
+        public async Task<IActionResult> Update([FromBody]UsuarioEdit us)
         {
             return Ok(await _UsuarioServiceAsync.Update(us));
         }
