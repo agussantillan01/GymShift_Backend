@@ -29,5 +29,31 @@ namespace Business.Services.Actividades
         {
             return await _ApplicationDbContext.TiposDeEventos.ToListAsync();
         }
+        public async Task<List<TipoEvento>> ObtenerDeportesXcoach(string usernameLogueado)
+        {
+            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == usernameLogueado);
+
+            if (usuarioLogueado == null)
+            {
+                return new List<TipoEvento>();
+            }
+
+            var deportesXusuario = await _ApplicationDbContext.ActividadesXEntrenador
+                .Where(ae => ae.IdUsuario == usuarioLogueado.Id) 
+                .Join(
+                    _ApplicationDbContext.TiposDeEventos,  
+                    ae => ae.IdActividad,             
+                    td => td.Id,                       
+                    (ae, td) => new TipoEvento         
+                    {
+                        Id = td.Id,
+                        Nombre = td.Nombre
+                    }
+                )
+                .Distinct()
+                .ToListAsync();
+
+            return deportesXusuario;
+        }
     }
 }

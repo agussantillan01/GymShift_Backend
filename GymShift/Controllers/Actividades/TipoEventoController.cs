@@ -25,6 +25,13 @@ namespace GymShift.Controllers.Actividades
         public async Task<List<TipoEvento>> GetTiposEventos()
         {
             return await _TipoEventoServiceAsync.GetTiposEventos();
+        } 
+        [HttpGet("GetDeportesXusuario")]
+        [Authorize]
+        public async Task<List<TipoEvento>> GetDeportesXusuario()
+        {
+            var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            return await _TipoEventoServiceAsync.ObtenerDeportesXcoach(user);
         }
     }
 }
