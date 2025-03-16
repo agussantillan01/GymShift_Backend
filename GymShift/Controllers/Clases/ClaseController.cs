@@ -1,4 +1,5 @@
-﻿using Business.Interfaces;
+﻿using Business.DTOs.Clase;
+using Business.Interfaces;
 using Business.Services.Actividades;
 using Business.Services.Clases;
 using Infrastructure.Models;
@@ -22,7 +23,7 @@ namespace GymShift.Controllers.Clases
 
         [HttpPost("GenerarEvento")]
         [Authorize]
-        public async Task<IActionResult> GenerarEvento()
+        public async Task<IActionResult> GenerarEvento([FromBody] ClaseParemeterDTO clase)
         {
             return Ok(await _ClasesServiceAsync.Generar());
         }
