@@ -25,7 +25,7 @@ namespace GymShift.Controllers.Clases
         [Authorize]
         public async Task<IActionResult> GenerarEvento([FromBody] ClaseParemeterDTO clase)
         {
-            return Ok(await _ClasesServiceAsync.Generar());
+            return Ok(await _ClasesServiceAsync.Generar(clase));
         }
     }
 }
