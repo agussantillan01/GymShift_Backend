@@ -56,6 +56,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new ServicioEmailConfiguration());
             modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());
             modelBuilder.ApplyConfiguration(new ActividadesXEntrenadorConfiguration());
+            modelBuilder.ApplyConfiguration(new EventoConfiguration());
             modelBuilder.ApplyConfiguration(new ModalidadConfiguration());
         }
     }

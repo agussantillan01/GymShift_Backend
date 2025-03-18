@@ -3,6 +3,7 @@ using Business.DTOs.Clase;
 using Business.Exceptions;
 using Domain.Interface;
 using Infrastructure.Contexts;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -31,7 +32,6 @@ namespace Business.Services.Clases
             var validationErrors = new List<string>();
             await Validar(Actividad, validationErrors);
 
-            
             return "";
 
         }

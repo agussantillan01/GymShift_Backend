@@ -16,5 +16,10 @@ namespace Infrastructure.Models
         public string Duracion { get; set; }
         public string Dias { get; set; }
         public int IdModalidad { get; set; }
+        public decimal Valor { get; set; }
+        public string Descripcion { get; set; }
+        public int CupoMaximo { get; set; }
+        public int CupoActual { get; set; }
+        public int IdProfesor { get; set; }
     }
 }
