@@ -18,10 +18,20 @@ namespace Business.Services.Clases
         private readonly ApplicationDbContext _ApplicationDbContext;
         #endregion
 
+        public ClasesServiceAsync(ApplicationDbContext ApplicationDbContext,
+                                IConexion conexion
+                                )
+        {
+            _conexion = conexion;
+            _ApplicationDbContext = ApplicationDbContext;
+        }
+
         public async Task<string> Generar(ClaseParemeterDTO Actividad)
         {
             var validationErrors = new List<string>();
             await Validar(Actividad, validationErrors);
+
+            
             return "";
 
         }

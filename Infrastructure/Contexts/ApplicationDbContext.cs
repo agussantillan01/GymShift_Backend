@@ -30,6 +30,8 @@ namespace Infrastructure.Contexts
         public DbSet<ServicioEmail> ServicioEmails { get; set; }
         public DbSet<TipoEvento> TiposDeEventos { get; set; }
         public DbSet<ActividadesXEntrenador> ActividadesXEntrenador { get; set; }
+        public DbSet<Modalidad> Modalidades { get; set; }
+        public DbSet<Evento> Eventos { get; set; }
 
         #endregion
 
@@ -54,6 +56,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new ServicioEmailConfiguration());
             modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());
             modelBuilder.ApplyConfiguration(new ActividadesXEntrenadorConfiguration());
+            modelBuilder.ApplyConfiguration(new ModalidadConfiguration());
         }
     }
 }
