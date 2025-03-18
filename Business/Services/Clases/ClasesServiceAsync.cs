@@ -31,27 +31,37 @@ namespace Business.Services.Clases
 
         public async Task<string> Generar(ClaseParemeterDTO Actividad, string user)
         {
-            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
-            var validationErrors = new List<string>();
-            await Validar(Actividad, validationErrors);
+            try
+            {
+                var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
+                if (usuarioLogueado == null) throw new ApiException($"Ocurrió con tus creedenciales. Por favor Comuníquese.");
+                var validationErrors = new List<string>();
+                await Validar(Actividad, validationErrors);
 
-            Evento evento = new Evento();
-            evento.IdTipoEvento = Actividad.Actividad;
-            evento.FechaInicio = Actividad.FechaInicio;
-            evento.FechaFin = Actividad.FechaFin;
-            evento.Horario = Actividad.Horario.Trim();
-            evento.Duracion = Actividad.Duracion.Trim();
-            evento.Dias = string.Join(";", Actividad.Dias);
-            evento.IdModalidad = int.Parse(Actividad.Modalidad);
-            evento.Valor = Convert.ToDecimal(Actividad.Valor);
-            evento.Descripcion = Actividad.Descripcion;
-            evento.CupoMaximo = Actividad.CupoMaximo;
-            evento.CupoActual = 0;
-            evento.IdProfesor = usuarioLogueado.Id;
-            await _ApplicationDbContext.AddAsync(evento);
-            await _ApplicationDbContext.SaveChangesAsync();
+                Evento evento = new Evento();
+                evento.IdTipoEvento = Actividad.Actividad;
+                evento.FechaInicio = Actividad.FechaInicio;
+                evento.FechaFin = Actividad.FechaFin;
+                evento.Horario = Actividad.Horario.Trim();
+                evento.Duracion = Actividad.Duracion.Trim();
+                evento.Dias = string.Join(";", Actividad.Dias);
+                evento.IdModalidad = int.Parse(Actividad.Modalidad);
+                evento.Valor = Convert.ToDecimal(Actividad.Valor);
+                evento.Descripcion = Actividad.Descripcion;
+                evento.CupoMaximo = Actividad.CupoMaximo;
+                evento.CupoActual = 0;
+                evento.IdProfesor = usuarioLogueado.Id;
+                await _ApplicationDbContext.AddAsync(evento);
+                await _ApplicationDbContext.SaveChangesAsync();
 
-            return "";
+                return "";
+            }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+
 
         }
         public async Task Validar(ClaseParemeterDTO Actividad, List<string> validations)
