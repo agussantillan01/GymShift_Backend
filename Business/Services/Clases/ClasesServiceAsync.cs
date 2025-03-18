@@ -1,5 +1,6 @@
 ﻿using Azure.Core;
 using Business.DTOs.Clase;
+using Business.DTOs.Eventos;
 using Business.Exceptions;
 using Domain.Interface;
 using Infrastructure.Contexts;
@@ -86,7 +87,7 @@ namespace Business.Services.Clases
             {
                 validations.Add("Debe ingresar una Duracion.");
             }
-            if(Actividad.FechaInicio > Actividad.FechaFin)
+            if (Actividad.FechaInicio > Actividad.FechaFin)
             {
                 validations.Add("La fecha de inicio debe ser mayor a la fecha de hoy");
             }
@@ -95,6 +96,50 @@ namespace Business.Services.Clases
             {
                 throw new ValidationException(validations);
             }
+        }
+        public async Task<List<MiEventoView>> ObtenerClasesXcoach(int IdCoach)
+        {
+            var eventos = await CargarListaMisEventos(IdCoach);
+
+            return eventos;
+        }
+        public async Task<List<MiEventoView>> CargarListaMisEventos(int idCoach)
+        {
+            List<MiEventoView> eventos = new List<MiEventoView>();
+            var listaBase = await _ApplicationDbContext.Eventos.Where(x => x.IdProfesor == idCoach).ToListAsync();
+            foreach (Evento item in listaBase)
+            {
+                MiEventoView evt = new MiEventoView();
+                evt.Id = item.Id;
+                evt.TipoEvento = await ObtenerNombreActividad(item.IdTipoEvento);
+                evt.FechaInicio = item.FechaInicio;
+                evt.FechaFin = item.FechaFin;
+                evt.Horario = item.Horario;
+                evt.Duracion = item.Duracion;
+                evt.Dias = item.Dias;
+                evt.Modalidad = await ObtenerNombreModalidad(item.IdModalidad);
+                evt.Valor = item.Valor;
+                evt.Descripcion = item.Descripcion;
+                evt.CupoMaximo = item.CupoMaximo;
+                evt.CupoActual = item.CupoActual;
+                evt.Profesor = await ObtenerNombreApeXCoach(item.IdProfesor);
+                eventos.Add(evt);
+            }
+            return eventos;
+        }
+
+        private async Task<string> ObtenerNombreApeXCoach(int id)
+        {
+            var usuario = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
+            return $"{usuario.Nombre} {usuario.Apellido}";
+        }
+        private async Task<string> ObtenerNombreModalidad(int idModalidad)
+        {
+            return (await _ApplicationDbContext.Modalidades.FirstOrDefaultAsync(x=> x.Id== idModalidad)).modalidad;
+        }
+        private async Task<string> ObtenerNombreActividad(int idActividad)
+        {
+            return (await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Id == idActividad)).Nombre;
         }
     }
 }

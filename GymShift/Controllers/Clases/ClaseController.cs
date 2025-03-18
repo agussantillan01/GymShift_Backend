@@ -1,7 +1,9 @@
 ﻿using Business.DTOs.Clase;
+using Business.DTOs.Eventos;
 using Business.Interfaces;
 using Business.Services.Actividades;
 using Business.Services.Clases;
+using Domain.Entities;
 using Infrastructure.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -28,5 +30,12 @@ namespace GymShift.Controllers.Clases
             var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             return Ok(await _ClasesServiceAsync.Generar(clase, user));
         }
+        [HttpGet("GetClasesXcoach")]
+        [Authorize]
+        public async Task<List<MiEventoView>> GetClasesXcoach([FromQuery] int id)
+        {
+            return await _ClasesServiceAsync.ObtenerClasesXcoach(id);
+        }
+
     }
 }
