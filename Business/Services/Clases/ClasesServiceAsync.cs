@@ -3,8 +3,10 @@ using Business.DTOs.Clase;
 using Business.Exceptions;
 using Domain.Interface;
 using Infrastructure.Contexts;
+using Infrastructure.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -27,10 +29,27 @@ namespace Business.Services.Clases
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<string> Generar(ClaseParemeterDTO Actividad)
+        public async Task<string> Generar(ClaseParemeterDTO Actividad, string user)
         {
+            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
             var validationErrors = new List<string>();
             await Validar(Actividad, validationErrors);
+
+            Evento evento = new Evento();
+            evento.IdTipoEvento = Actividad.Actividad;
+            evento.FechaInicio = Actividad.FechaInicio;
+            evento.FechaFin = Actividad.FechaFin;
+            evento.Horario = Actividad.Horario.Trim();
+            evento.Duracion = Actividad.Duracion.Trim();
+            evento.Dias = string.Join(";", Actividad.Dias);
+            evento.IdModalidad = int.Parse(Actividad.Modalidad);
+            evento.Valor = Convert.ToDecimal(Actividad.Valor);
+            evento.Descripcion = Actividad.Descripcion;
+            evento.CupoMaximo = Actividad.CupoMaximo;
+            evento.CupoActual = 0;
+            evento.IdProfesor = usuarioLogueado.Id;
+            await _ApplicationDbContext.AddAsync(evento);
+            await _ApplicationDbContext.SaveChangesAsync();
 
             return "";
 
