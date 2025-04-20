@@ -30,11 +30,24 @@ namespace GymShift.Controllers.Clases
             var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             return Ok(await _ClasesServiceAsync.Generar(clase, user));
         }
-        [HttpGet("GetClasesXcoach")]
+        [HttpGet("GetClasesAprobadasXcoach")]
         [Authorize]
-        public async Task<List<MiEventoView>> GetClasesXcoach([FromQuery] int id)
+        public async Task<List<MiEventoView>> GetClasesAprobadasXcoach([FromQuery] int id)
         {
-            return await _ClasesServiceAsync.ObtenerClasesXcoach(id);
+            return await _ClasesServiceAsync.ObtenerClasesAprobadasXcoach(id);
+        }
+        [HttpGet("GetClasesSolicitadasXCoach")]
+        [Authorize]
+        public async Task<List<MiEventoView>> GetClasesSolicitadasXCoach()
+        {
+            var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+            return await _ClasesServiceAsync.ObtenerClasesSolicitadasXCoach(user);
+        }
+        [HttpGet("GetClasesSolicitadas")]
+        [Authorize]
+        public async Task<List<MiEventoView>> GetClasesSolicitadas()
+        {
+            return await _ClasesServiceAsync.ObtenerClasesSolicitadas();
         }
 
     }

@@ -21,5 +21,6 @@ namespace Infrastructure.Models
         public int CupoMaximo { get; set; }
         public int CupoActual { get; set; }
         public int IdProfesor { get; set; }
+        public string EstadoSolicitud { get; set; }
     }
 }

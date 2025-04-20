@@ -27,6 +27,7 @@ namespace Infrastructure.Configuration
             builder.Property(x => x.CupoMaximo).HasColumnName("CUPOMAXIMO").HasColumnType("int").IsRequired();
             builder.Property(x => x.CupoActual).HasColumnName("CUPODEMOMENTO").HasColumnType("int").IsRequired();
             builder.Property(x => x.IdProfesor).HasColumnName("IDUSUARIO").HasColumnType("int").IsRequired();
+            builder.Property(x => x.EstadoSolicitud).HasColumnName("ESTADOSOLICITUD").HasColumnType("varchar").HasMaxLength(100);
 
         }
     }

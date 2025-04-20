@@ -52,6 +52,7 @@ namespace Business.Services.Clases
                 evento.CupoMaximo = Actividad.CupoMaximo;
                 evento.CupoActual = 0;
                 evento.IdProfesor = usuarioLogueado.Id;
+                evento.EstadoSolicitud = "PENDIENTE_APROBACION";
                 await _ApplicationDbContext.AddAsync(evento);
                 await _ApplicationDbContext.SaveChangesAsync();
 
@@ -97,16 +98,16 @@ namespace Business.Services.Clases
                 throw new ValidationException(validations);
             }
         }
-        public async Task<List<MiEventoView>> ObtenerClasesXcoach(int IdCoach)
+        public async Task<List<MiEventoView>> ObtenerClasesAprobadasXcoach(int IdCoach)
         {
-            var eventos = await CargarListaMisEventos(IdCoach);
+            var eventos = await CargarListaMisEventos(IdCoach, "APROBADO");
 
             return eventos;
         }
-        public async Task<List<MiEventoView>> CargarListaMisEventos(int idCoach)
+        public async Task<List<MiEventoView>> CargarListaMisEventos(int idCoach, string estado)
         {
             List<MiEventoView> eventos = new List<MiEventoView>();
-            var listaBase = await _ApplicationDbContext.Eventos.Where(x => x.IdProfesor == idCoach).ToListAsync();
+            var listaBase = await _ApplicationDbContext.Eventos.Where(x => x.IdProfesor == idCoach && x.EstadoSolicitud== estado).ToListAsync();
             foreach (Evento item in listaBase)
             {
                 MiEventoView evt = new MiEventoView();
@@ -128,6 +129,40 @@ namespace Business.Services.Clases
             return eventos;
         }
 
+
+
+        public async Task<List<MiEventoView>> ObtenerClasesSolicitadasXCoach(string user)
+        {
+            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
+            var eventos = await CargarListaMisEventos(usuarioLogueado.Id, "PENDIENTE_APROBACION");
+
+            return eventos;
+        }
+
+        public async Task<List<MiEventoView>> ObtenerClasesSolicitadas()
+        {
+            List<MiEventoView> eventos = new List<MiEventoView>();
+            var listaBase = await _ApplicationDbContext.Eventos.Where(x => x.EstadoSolicitud.Trim().ToUpper() == "PENDIENTE_APROBACION").ToListAsync();
+            foreach (Evento item in listaBase)
+            {
+                MiEventoView evt = new MiEventoView();
+                evt.Id = item.Id;
+                evt.TipoEvento = await ObtenerNombreActividad(item.IdTipoEvento);
+                evt.FechaInicio = item.FechaInicio;
+                evt.FechaFin = item.FechaFin;
+                evt.Horario = item.Horario;
+                evt.Duracion = item.Duracion;
+                evt.Dias = item.Dias;
+                evt.Modalidad = await ObtenerNombreModalidad(item.IdModalidad);
+                evt.Valor = item.Valor;
+                evt.Descripcion = item.Descripcion;
+                evt.CupoMaximo = item.CupoMaximo;
+                evt.CupoActual = item.CupoActual;
+                evt.Profesor = await ObtenerNombreApeXCoach(item.IdProfesor);
+                eventos.Add(evt);
+            }
+            return eventos;
+        }
         private async Task<string> ObtenerNombreApeXCoach(int id)
         {
             var usuario = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
