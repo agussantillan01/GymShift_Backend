@@ -8,6 +8,7 @@ namespace Business.DTOs.Clase
 {
     public class ClaseParemeterDTO
     {
+        public int? Id { get; set; }
         public string Modalidad { get; set; }
         public DateTime FechaInicio { get; set; }
         public DateTime FechaFin { get; set; }

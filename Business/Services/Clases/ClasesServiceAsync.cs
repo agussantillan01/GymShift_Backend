@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Business.Enums;
 
 namespace Business.Services.Clases
 {
@@ -22,6 +23,7 @@ namespace Business.Services.Clases
         private readonly ApplicationDbContext _ApplicationDbContext;
         #endregion
 
+        EstadoSolicitudEnum _estadoSolicitudEnum;
         public ClasesServiceAsync(ApplicationDbContext ApplicationDbContext,
                                 IConexion conexion
                                 )
@@ -30,7 +32,7 @@ namespace Business.Services.Clases
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<string> Generar(ClaseParemeterDTO Actividad, string user)
+        public async Task<string> Insert(ClaseParemeterDTO Actividad, string user)
         {
             try
             {
@@ -63,6 +65,57 @@ namespace Business.Services.Clases
 
                 throw;
             }
+
+
+        }
+
+        public async Task<string> AprobarClase(int idClase) 
+        {
+            try
+            {
+                var evento = await _ApplicationDbContext.Eventos.FirstOrDefaultAsync(x => x.Id == idClase);
+                evento.EstadoSolicitud = "SOLICITUD_APROBADA";
+
+                _ApplicationDbContext.Update(evento);
+                await _ApplicationDbContext.SaveChangesAsync();
+                return "";
+
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+        }
+        public async Task<string> Update(ClaseParemeterDTO Actividad)
+        {
+            try
+            {
+                var evento = await _ApplicationDbContext.Eventos.FirstOrDefaultAsync(x => x.Id == Actividad.Id);
+                evento.IdTipoEvento = Actividad.Actividad;
+                evento.FechaInicio = Actividad.FechaInicio;
+                evento.FechaFin = Actividad.FechaFin;
+                evento.Horario = Actividad.Horario.Trim();
+                evento.Duracion = Actividad.Duracion.Trim();
+                evento.Dias = string.Join(";", Actividad.Dias);
+                evento.IdModalidad = int.Parse(Actividad.Modalidad);
+                evento.Valor = Convert.ToDecimal(Actividad.Valor);
+                evento.Descripcion = Actividad.Descripcion;
+                evento.CupoMaximo = Actividad.CupoMaximo;
+                evento.CupoActual = 0;
+                evento.IdProfesor = evento.IdProfesor;
+
+                _ApplicationDbContext.Update(evento);
+                await _ApplicationDbContext.SaveChangesAsync();
+
+                return $"Clase actualizada #${evento.Id} correctamente";
+            }
+            catch (Exception)
+            {
+
+                throw;
+            }
+
 
 
         }

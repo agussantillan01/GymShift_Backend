@@ -23,13 +23,33 @@ namespace GymShift.Controllers.Clases
             _ClasesServiceAsync = clasesServiceAsync;
         }
 
+        #region CRUD
+        #region Create 
         [HttpPost("GenerarEvento")]
         [Authorize]
         public async Task<IActionResult> GenerarEvento([FromBody] ClaseParemeterDTO clase)
         {
             var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            return Ok(await _ClasesServiceAsync.Generar(clase, user));
+            return Ok(await _ClasesServiceAsync.Insert(clase, user));
         }
+        #endregion
+
+        #region EDIT
+        [HttpPut("EditarEvento")] //Profesor actaliza su clase
+        [Authorize]
+        public async Task<IActionResult> EditarEvento([FromBody] ClaseParemeterDTO clase)
+        {
+            return Ok(await _ClasesServiceAsync.Update(clase));
+        }
+        [HttpPut("AprobarEvento")] 
+        [Authorize]
+        public async Task<IActionResult> Aprobar(int idClase)
+        {
+            return Ok(await _ClasesServiceAsync.AprobarClase(idClase));
+        }
+        #endregion
+        #region Gets
+
         [HttpGet("GetClasesAprobadasXcoach")]
         [Authorize]
         public async Task<List<MiEventoView>> GetClasesAprobadasXcoach([FromQuery] int id)
@@ -45,10 +65,17 @@ namespace GymShift.Controllers.Clases
         }
         [HttpGet("GetClasesSolicitadas")]
         [Authorize]
-        public async Task<List<MiEventoView>> GetClasesSolicitadas()
+        public async Task<List<MiEventoView>> GetClasesSolicitadas() //PARA PERFIL SECRETARIO
         {
             return await _ClasesServiceAsync.ObtenerClasesSolicitadas();
         }
 
+        #endregion
+        #endregion
+
+
+
     }
+
+
 }
