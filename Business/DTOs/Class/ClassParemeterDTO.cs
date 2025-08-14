@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Business.DTOs.Clase
 {
-    public class ClaseParemeterDTO
+    public class ClassParemeterDTO
     {
         public int? Id { get; set; }
         public string Modalidad { get; set; }

@@ -36,13 +36,13 @@ namespace Business.Services.Usuarios
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<List<UsuarioView>> ObtenerUsuarios(string userNameLogueado, int pageNumber, int pageSize, string filter)
+        public async Task<List<UserView>> ObtenerUsuarios(string userNameLogueado, int pageNumber, int pageSize, string filter)
         {
             var usuarioLogueado = await _ApplicationDbContext.Usuarios
                 .FirstOrDefaultAsync(x => x.UserName.Trim() == userNameLogueado);
 
             if (usuarioLogueado == null)
-                return new List<UsuarioView>();
+                return new List<UserView>();
 
             var query = _ApplicationDbContext.Usuarios
                 .Where(x => x.Id != usuarioLogueado.Id);
@@ -63,7 +63,7 @@ namespace Business.Services.Usuarios
                 .Take(pageSize)
                 .ToListAsync();
 
-            var lista = listUsers.Select(item => new UsuarioView()
+            var lista = listUsers.Select(item => new UserView()
             {
                 Id = item.Id,
                 Nombre = item.Nombre,
@@ -75,9 +75,9 @@ namespace Business.Services.Usuarios
         }
 
 
-        public async Task<UsuarioEdit> GetUsuario(int idUsuario)
+        public async Task<UserEdit> GetUsuario(int idUsuario)
         {
-            UsuarioEdit usuarioReturn = new UsuarioEdit();
+            UserEdit usuarioReturn = new UserEdit();
             var usuario = await _ApplicationDbContext.Usuarios.SingleOrDefaultAsync(x => x.Id == idUsuario);
 
             usuarioReturn.Id = usuario.Id;
@@ -91,7 +91,7 @@ namespace Business.Services.Usuarios
 
         }
 
-        public async Task<Response<string>> Update(UsuarioEdit usuario)
+        public async Task<Response<string>> Update(UserEdit usuario)
         {
 
             try
@@ -223,11 +223,11 @@ namespace Business.Services.Usuarios
         }
         private async Task InsertActividades(int idUsuario, List<string> actividades)
         {
-            List<ActividadesXEntrenador> listInsert = new List<ActividadesXEntrenador>();
+            List<ActivityByCoach> listInsert = new List<ActivityByCoach>();
             foreach (var item in actividades)
             {
                 var objActividad = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == item.Trim().ToUpper());
-                ActividadesXEntrenador actXEntrenador = new ActividadesXEntrenador();
+                ActivityByCoach actXEntrenador = new ActivityByCoach();
                 actXEntrenador.IdUsuario = idUsuario;
                 actXEntrenador.IdActividad = objActividad.Id;
 

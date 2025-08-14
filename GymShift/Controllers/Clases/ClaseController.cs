@@ -1,5 +1,5 @@
 ﻿using Business.DTOs.Clase;
-using Business.DTOs.Eventos;
+using Business.DTOs.Class;
 using Business.Interfaces;
 using Business.Services.Actividades;
 using Business.Services.Clases;
@@ -27,7 +27,7 @@ namespace GymShift.Controllers.Clases
         #region Create 
         [HttpPost("GenerarEvento")]
         [Authorize]
-        public async Task<IActionResult> GenerarEvento([FromBody] ClaseParemeterDTO clase)
+        public async Task<IActionResult> GenerarEvento([FromBody] ClassParemeterDTO clase)
         {
             var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             return Ok(await _ClasesServiceAsync.Insert(clase, user));
@@ -37,7 +37,7 @@ namespace GymShift.Controllers.Clases
         #region EDIT
         [HttpPut("EditarEvento")] //Profesor actaliza su clase
         [Authorize]
-        public async Task<IActionResult> EditarEvento([FromBody] ClaseParemeterDTO clase)
+        public async Task<IActionResult> EditarEvento([FromBody] ClassParemeterDTO clase)
         {
             return Ok(await _ClasesServiceAsync.Update(clase));
         }
@@ -52,20 +52,20 @@ namespace GymShift.Controllers.Clases
 
         [HttpGet("GetClasesAprobadasXcoach")]
         [Authorize]
-        public async Task<List<MiEventoView>> GetClasesAprobadasXcoach([FromQuery] int id)
+        public async Task<List<MyClassView>> GetClasesAprobadasXcoach([FromQuery] int id)
         {
             return await _ClasesServiceAsync.ObtenerClasesAprobadasXcoach(id);
         }
         [HttpGet("GetClasesSolicitadasXCoach")]
         [Authorize]
-        public async Task<List<MiEventoView>> GetClasesSolicitadasXCoach()
+        public async Task<List<MyClassView>> GetClasesSolicitadasXCoach()
         {
             var user = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
             return await _ClasesServiceAsync.ObtenerClasesSolicitadasXCoach(user);
         }
         [HttpGet("GetClasesSolicitadas")]
         [Authorize]
-        public async Task<List<MiEventoView>> GetClasesSolicitadas() //PARA PERFIL SECRETARIO
+        public async Task<List<MyClassView>> GetClasesSolicitadas() //PARA PERFIL SECRETARIO
         {
             return await _ClasesServiceAsync.ObtenerClasesSolicitadas();
         }

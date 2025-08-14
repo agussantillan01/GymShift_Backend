@@ -21,7 +21,7 @@ namespace GymShift.Controllers.Usuarios
         }
         [HttpGet("GetUsuarios")]
         [Authorize]
-        public async Task<List<UsuarioView>> GetUsuarios(int pageNumber, int pageSize, string filter)
+        public async Task<List<UserView>> GetUsuarios(int pageNumber, int pageSize, string filter)
         {
             filter = filter == null ? "" :filter.Trim(); 
             var user= User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
@@ -29,13 +29,13 @@ namespace GymShift.Controllers.Usuarios
         }
         [HttpGet("GetUsuario/{IdUsuario}")]
         [Authorize]
-        public async Task<UsuarioEdit> GetUsuario(int IdUsuario)
+        public async Task<UserEdit> GetUsuario(int IdUsuario)
         {
             return await _UsuarioServiceAsync.GetUsuario(IdUsuario);
         }
         [HttpPost("Update")]
         [Authorize]
-        public async Task<IActionResult> Update([FromBody]UsuarioEdit us)
+        public async Task<IActionResult> Update([FromBody]UserEdit us)
         {
             return Ok(await _UsuarioServiceAsync.Update(us));
         }

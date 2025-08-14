@@ -56,8 +56,8 @@ namespace Business.Services
         #endregion 
         public async Task<Response<AuthenticationResponse>> AuthenticateAsync(AuthenticationRequest request, string ipAddress)
         {
-            var users = await _ApplicationDbContext.Usuarios.ToListAsync();
-            var user = await GetUsuario(request);
+            var users = await _ApplicationDbContext.Users.ToListAsync();
+            var user = await GetUser(request);
             JwtSecurityToken jwtSecurityToken = await GenerateJWToken(user);
             var refreshToken = GenerateRefreshToken(ipAddress, user.Id);
             await UpdateRefreshToken(refreshToken);
@@ -69,7 +69,7 @@ namespace Business.Services
             response.RefreshToken = refreshToken.Token;
             response.JWToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
             response.ExpireDate = jwtSecurityToken.ValidTo.ToLocalTime();
-            response.usuario = await GetUsuarioXId(user.Id);
+            response.usuario = await GetUserById(user.Id);
             return new Response<AuthenticationResponse>(response, $"{user.Email.Trim()} autenticado");
         }
 
@@ -88,7 +88,7 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-        public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
+        public async Task<UsuarioLogin> GetUser(AuthenticationRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.Usuario);
             if (user == null)
@@ -99,14 +99,14 @@ namespace Business.Services
             return user;
         }
 
-        public async Task<Usuario> GetUsuarioXId(int id)
+        public async Task<Usuario> GetUserById(int id)
         {
-            var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
+            var user = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
             Usuario us = new Usuario();
             us.Id = id;
-            us.Apellido = user.Apellido;
-            us.Nombre = user.Nombre;
-            if (user.EsUserSistema)
+            us.Apellido = user.lastName;
+            us.Nombre = user.firstName;
+            if (user.isUserAdmin)
             {
                 us.Role = ["ADMIN"];
                 us.Permissions = await getAllPermissions();
@@ -126,7 +126,7 @@ namespace Business.Services
         }
         private async Task<string[]> getAllPermissions()
         {
-            var permissionsDB = await _ApplicationDbContext.Permisos.ToListAsync();
+            var permissionsDB = await _ApplicationDbContext.Permissions.ToListAsync();
             return permissionsDB.Select(p => p.ClaimType).ToArray();
         }
         private async Task<string[]> getPermissionsXRole(string[] rolesTypes)
@@ -137,7 +137,7 @@ namespace Business.Services
 
             var roleIds = roles.Select(r => r.Id).ToList();
 
-            var permissionsDB = await _ApplicationDbContext.PermisoXRol
+            var permissionsDB = await _ApplicationDbContext.PermissionByRole
                 .Where(pxr => roleIds.Contains(pxr.IdRol))
                 .Select(pxr => pxr.Permiso.ClaimType)
                 .Distinct()
@@ -147,7 +147,7 @@ namespace Business.Services
         }
         private async Task<string[]> GetRolesXUsuario(int id)
         {
-            var IdsRoles = await _ApplicationDbContext.UsuarioXRol
+            var IdsRoles = await _ApplicationDbContext.UserByRol
                 .Where(x => x.IdUsuario == id)
                 .ToListAsync();
 
@@ -208,8 +208,8 @@ namespace Business.Services
             var user = new UsuarioLogin
             {
                 Email = request.Email,
-                Nombre = request.FirstName,
-                Apellido = request.LastName,
+                firstName = request.FirstName,
+                lastName = request.LastName,
                 UserName = request.UserName,
                 NormalizedEmail = request.Email.ToUpper(),
                 NormalizedUserName = request.UserName.ToUpper()
@@ -222,7 +222,7 @@ namespace Business.Services
             if (result.Succeeded)
             {
                 await SeteoRolActividades(user.Id, request.Rol, request.Actividades);
-                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, request.UserName, user.Nombre);
+                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, request.UserName, user.firstName);
 
 
                 return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
@@ -247,7 +247,7 @@ namespace Business.Services
                     IdUsuario = newId
                 };
 
-                await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);
+                await _ApplicationDbContext.UserByRol.AddAsync(usXrol);
                 await _ApplicationDbContext.SaveChangesAsync();
             }
             catch (Exception ex)
@@ -265,23 +265,23 @@ namespace Business.Services
                     List<TipoEvento> listEvents = new List<TipoEvento>();
                     foreach (var item in actividades)
                     {
-                        var Tipo = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == item);
+                        var Tipo = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Type.Trim().ToUpper() == item);
                         listEvents.Add(Tipo);
                     }
-                    List<ActividadesXEntrenador> listaAInsertar = new List<ActividadesXEntrenador>();
+                    List<ActivityByCoach> listaAInsertar = new List<ActivityByCoach>();
 
                     foreach (var item in listEvents)
                     {
-                        ActividadesXEntrenador actXCoach = new ActividadesXEntrenador()
+                        ActivityByCoach actXCoach = new ActivityByCoach()
                         {
-                            IdUsuario = newId,
-                            IdActividad = item.Id
+                            IdUser = newId,
+                            IdActivity = item.Id
                         };
                         listaAInsertar.Add(actXCoach);
 
                     }
 
-                    await _ApplicationDbContext.ActividadesXEntrenador.AddRangeAsync(listaAInsertar);
+                    await _ApplicationDbContext.ActivityByCoach.AddRangeAsync(listaAInsertar);
                     await _ApplicationDbContext.SaveChangesAsync();
                 }
 
@@ -335,7 +335,7 @@ namespace Business.Services
                  new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName.Trim()),
                  new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.UserName.Trim()),
                  new Claim("uid", user.Id.ToString()),
-                 new Claim("userSistema", user.EsUserSistema.ToString()),
+                 new Claim("isUserAdmin", user.isUserAdmin.ToString()),
                  new Claim("ip", ipAddress),
                  //new Claim("idEmpresa", idEmpresa.Trim())
             };

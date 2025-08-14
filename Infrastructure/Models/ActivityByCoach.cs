@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class ActividadesXEntrenador
+    public class ActivityByCoach
     {
         public int Id { get; set; }
-        public int IdUsuario { get; set; }
-        public int IdActividad { get; set; }
+        public int IdUser { get; set; }
+        public int IdActivity { get; set; }
     }
 }

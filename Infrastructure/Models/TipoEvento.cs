@@ -9,6 +9,6 @@ namespace Infrastructure.Models
     public class TipoEvento
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
+        public string Type { get; set; }
     }
 }

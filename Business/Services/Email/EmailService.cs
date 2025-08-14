@@ -77,7 +77,7 @@ namespace Business.Services.Email
                 FechaEnvio = DateTime.Now
             };
 
-            await _applicationDbContext.ServicioEmails.AddAsync(servicioEmail);
+            await _applicationDbContext.EmailServices.AddAsync(servicioEmail);
             await _applicationDbContext.SaveChangesAsync();
         }
 

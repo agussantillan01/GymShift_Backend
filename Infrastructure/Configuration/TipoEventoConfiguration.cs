@@ -13,10 +13,10 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<TipoEvento> builder)
         {
-            builder.ToTable("TIPOSEVENTOS");
+            builder.ToTable("TypesOfClasses");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Nombre).HasColumnName("TIPO").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.Type).HasColumnName("type").HasColumnType("varchar").HasMaxLength(500).IsRequired();
 
 
         }

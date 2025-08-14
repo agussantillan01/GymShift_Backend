@@ -4,9 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Business.DTOs.Eventos
+namespace Business.DTOs.Class
 {
-    public class MiEventoView
+    public class MyClassView
     {
         public int Id { get; set; }
         public string TipoEvento { get; set; }

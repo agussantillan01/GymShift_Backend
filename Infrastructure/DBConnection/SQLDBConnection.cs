@@ -15,7 +15,7 @@ namespace Infrastructure.DBConnection
         protected SqlCommand command;
         protected SqlTransaction transaction;
 
-        string connectionString = "Server=DESKTOP-UMTV5OF\\SQLEXPRESS;database=DB_GYMSHIFT;Integrated Security=true";
+        string connectionString = "Server=DESKTOP-UMTV5OF\\SQLEXPRESS;database=GYMSHIFT;Integrated Security=true";
 
         public SQLDBConnection(string connectionString)
         {

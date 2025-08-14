@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Business.Enums
 {
-    public enum EstadoSolicitudEnum
+    public enum ApplicationStatusEnum
     {
-        PENDIENTE_APROBACION,
-        SOLICITUD_APROBADA,
-        SOLICITUD_DESAPROBADA
+        PENDIENTE_APROBACION=1,
+        SOLICITUD_APROBADA=2,
+        SOLICITUD_DESAPROBADA=3
 
     }
 }

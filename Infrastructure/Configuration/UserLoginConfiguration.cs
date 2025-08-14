@@ -9,15 +9,15 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class UsuarioLoginConfiguration : IEntityTypeConfiguration<UsuarioLogin>
+    public class UserLoginConfiguration : IEntityTypeConfiguration<UsuarioLogin>
     {
         public void Configure(EntityTypeBuilder<UsuarioLogin> builder)
         {
-            builder.ToTable("Usuarios");
+            builder.ToTable("Users");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Nombre).HasColumnName("Nombre").HasColumnType("varchar").HasMaxLength(500).IsRequired();
-            builder.Property(x => x.Apellido).HasColumnName("Apellido").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.firstName).HasColumnName("firstName").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.lastName).HasColumnName("lastName").HasColumnType("varchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.PasswordHash).HasColumnName("PasswordHash").HasColumnType("nvarchar").IsRequired();
             builder.Property(x => x.UserName).HasColumnName("UserName").HasMaxLength(500).HasColumnType("nvarchar").IsRequired();
             builder.Property(x => x.NormalizedUserName).HasColumnName("NormalizedUserName").HasColumnType("nvarchar").HasMaxLength(500).IsRequired();
@@ -25,7 +25,7 @@ namespace Infrastructure.Configuration
             builder.Property(x => x.Email).HasColumnName("Email").HasMaxLength(500).HasColumnType("nvarchar").IsRequired();
             builder.Property(x => x.NormalizedEmail).HasColumnName("NormalizedEmail").HasColumnType("nvarchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.SecurityStamp).HasColumnName("SecurityStamp").HasColumnType("nvarchar").IsRequired(false);
-            builder.Property(x => x.EsUserSistema).HasColumnName("EsUserAdmin").HasColumnType("bit").IsRequired();
+            builder.Property(x => x.isUserAdmin).HasColumnName("isUserAdmin").HasColumnType("bit").IsRequired();
 
 
             //builder.Ignore(c => c.NormalizedUserName);

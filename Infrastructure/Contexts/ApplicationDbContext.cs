@@ -22,16 +22,16 @@ namespace Infrastructure.Contexts
         }
 
         #region DataSets
-        public DbSet<UsuarioLogin> Usuarios { get; set; }
+        public DbSet<UsuarioLogin> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Permiso> Permisos { get; set; }
-        public DbSet<PermisoXRol> PermisoXRol { get; set; }
-        public DbSet<UsuarioXRol> UsuarioXRol { get; set; }
-        public DbSet<ServicioEmail> ServicioEmails { get; set; }
-        public DbSet<TipoEvento> TiposDeEventos { get; set; }
-        public DbSet<ActividadesXEntrenador> ActividadesXEntrenador { get; set; }
-        public DbSet<Modalidad> Modalidades { get; set; }
-        public DbSet<Evento> Eventos { get; set; }
+        public DbSet<Permiso> Permissions { get; set; }
+        public DbSet<PermisoXRol> PermissionByRole { get; set; }
+        public DbSet<UsuarioXRol> UserByRol { get; set; }
+        public DbSet<ServicioEmail> EmailServices { get; set; }
+        public DbSet<TipoEvento> TypesClasses { get; set; }
+        public DbSet<ActivityByCoach> ActivityByCoach { get; set; }
+        public DbSet<Modalidad> Modalities { get; set; }
+        public DbSet<Class> Classes { get; set; }
 
         #endregion
 
@@ -48,7 +48,7 @@ namespace Infrastructure.Contexts
             });
             base.OnModelCreating(modelBuilder);
             //llamo a los Configurations
-            modelBuilder.ApplyConfiguration(new UsuarioLoginConfiguration());
+            modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new PermisoConfiguration());
             modelBuilder.ApplyConfiguration(new PermisoXRolConfiguration());

@@ -21,8 +21,8 @@ namespace Business.Interfaces
         Task<Response<string>> ResetPassword(ResetPasswordRequest model);
         Task<Response<AuthenticationResponse>> RefreshToken(int userId, string refreshToken, string userName, string idEmpresa, string ip);
         ClaimsPrincipal GetPrincipalFromExpiredToken(string token);
-        Task<UsuarioLogin> GetUsuario(AuthenticationRequest request);
-        Task<Usuario> GetUsuarioXId(int id);
+        Task<UsuarioLogin> GetUser(AuthenticationRequest request);
+        Task<Usuario> GetUserById(int id);
         Task<List<Role>> GetRoles();
     }
 }

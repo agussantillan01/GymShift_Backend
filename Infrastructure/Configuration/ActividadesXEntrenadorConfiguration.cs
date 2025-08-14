@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class ActividadesXEntrenadorConfiguration : IEntityTypeConfiguration<ActividadesXEntrenador>
+    public class ActividadesXEntrenadorConfiguration : IEntityTypeConfiguration<ActivityByCoach>
     {
-        public void Configure(EntityTypeBuilder<ActividadesXEntrenador> builder)
+        public void Configure(EntityTypeBuilder<ActivityByCoach> builder)
         {
             builder.ToTable("ACTIVIDADESXCOACHS");
 
@@ -21,11 +21,11 @@ namespace Infrastructure.Configuration
                 .HasColumnName("ID")
                 .ValueGeneratedOnAdd();
 
-            builder.Property(a => a.IdUsuario)
+            builder.Property(a => a.IdUser)
                 .HasColumnName("IDUSUARIO")
                 .IsRequired();
 
-            builder.Property(a => a.IdActividad)
+            builder.Property(a => a.IdActivity)
                 .HasColumnName("IDACTIVIDAD")
                 .IsRequired();
         }

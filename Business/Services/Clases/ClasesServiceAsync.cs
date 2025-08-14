@@ -1,6 +1,5 @@
 ﻿using Azure.Core;
 using Business.DTOs.Clase;
-using Business.DTOs.Eventos;
 using Business.Exceptions;
 using Domain.Interface;
 using Infrastructure.Contexts;
@@ -13,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Business.Enums;
+using Business.DTOs.Class;
 
 namespace Business.Services.Clases
 {
@@ -23,7 +23,7 @@ namespace Business.Services.Clases
         private readonly ApplicationDbContext _ApplicationDbContext;
         #endregion
 
-        EstadoSolicitudEnum _estadoSolicitudEnum;
+
         public ClasesServiceAsync(ApplicationDbContext ApplicationDbContext,
                                 IConexion conexion
                                 )
@@ -32,29 +32,29 @@ namespace Business.Services.Clases
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<string> Insert(ClaseParemeterDTO Actividad, string user)
+        public async Task<string> Insert(ClassParemeterDTO Actividad, string user)
         {
             try
             {
-                var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
+                var usuarioLogueado = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
                 if (usuarioLogueado == null) throw new ApiException($"Ocurrió con tus creedenciales. Por favor Comuníquese.");
                 var validationErrors = new List<string>();
                 await Validar(Actividad, validationErrors);
 
-                Evento evento = new Evento();
-                evento.IdTipoEvento = Actividad.Actividad;
-                evento.FechaInicio = Actividad.FechaInicio;
-                evento.FechaFin = Actividad.FechaFin;
-                evento.Horario = Actividad.Horario.Trim();
-                evento.Duracion = Actividad.Duracion.Trim();
-                evento.Dias = string.Join(";", Actividad.Dias);
-                evento.IdModalidad = int.Parse(Actividad.Modalidad);
-                evento.Valor = Convert.ToDecimal(Actividad.Valor);
-                evento.Descripcion = Actividad.Descripcion;
-                evento.CupoMaximo = Actividad.CupoMaximo;
-                evento.CupoActual = 0;
-                evento.IdProfesor = usuarioLogueado.Id;
-                evento.EstadoSolicitud = "PENDIENTE_APROBACION";
+                Class evento = new Class();
+                evento.idTypeClass = Actividad.Actividad;
+                evento.dateFrom = Actividad.FechaInicio;
+                evento.dateTo = Actividad.FechaFin;
+                evento.schedule = Actividad.Horario.Trim();
+                evento.duration = Actividad.Duracion.Trim();
+                evento.days = string.Join(";", Actividad.Dias);
+                evento.idModality = int.Parse(Actividad.Modalidad);
+                evento.price = Convert.ToDecimal(Actividad.Valor);
+                evento.description = Actividad.Descripcion;
+                evento.amountMax = Actividad.CupoMaximo;
+                evento.amount = 0;
+                evento.idCoach = usuarioLogueado.Id;
+                evento.applicationStatus = (int)ApplicationStatusEnum.PENDIENTE_APROBACION;
                 await _ApplicationDbContext.AddAsync(evento);
                 await _ApplicationDbContext.SaveChangesAsync();
 
@@ -73,8 +73,8 @@ namespace Business.Services.Clases
         {
             try
             {
-                var evento = await _ApplicationDbContext.Eventos.FirstOrDefaultAsync(x => x.Id == idClase);
-                evento.EstadoSolicitud = "SOLICITUD_APROBADA";
+                var evento = await _ApplicationDbContext.Classes.FirstOrDefaultAsync(x => x.id == idClase);
+                evento.applicationStatus = (int)ApplicationStatusEnum.SOLICITUD_APROBADA;
 
                 _ApplicationDbContext.Update(evento);
                 await _ApplicationDbContext.SaveChangesAsync();
@@ -87,28 +87,27 @@ namespace Business.Services.Clases
                 throw;
             }
         }
-        public async Task<string> Update(ClaseParemeterDTO Actividad)
+        public async Task<string> Update(ClassParemeterDTO Actividad)
         {
             try
             {
-                var evento = await _ApplicationDbContext.Eventos.FirstOrDefaultAsync(x => x.Id == Actividad.Id);
-                evento.IdTipoEvento = Actividad.Actividad;
-                evento.FechaInicio = Actividad.FechaInicio;
-                evento.FechaFin = Actividad.FechaFin;
-                evento.Horario = Actividad.Horario.Trim();
-                evento.Duracion = Actividad.Duracion.Trim();
-                evento.Dias = string.Join(";", Actividad.Dias);
-                evento.IdModalidad = int.Parse(Actividad.Modalidad);
-                evento.Valor = Convert.ToDecimal(Actividad.Valor);
-                evento.Descripcion = Actividad.Descripcion;
-                evento.CupoMaximo = Actividad.CupoMaximo;
-                evento.CupoActual = 0;
-                evento.IdProfesor = evento.IdProfesor;
+                var evento = await _ApplicationDbContext.Classes.FirstOrDefaultAsync(x => x.id == Actividad.Id);
+                evento.idTypeClass = Actividad.Actividad;
+                evento.dateFrom = Actividad.FechaInicio;
+                evento.dateTo = Actividad.FechaFin;
+                evento.schedule = Actividad.Horario.Trim();
+                evento.duration = Actividad.Duracion.Trim();
+                evento.days = string.Join(";", Actividad.Dias);
+                evento.idModality = int.Parse(Actividad.Modalidad);
+                evento.price = Convert.ToDecimal(Actividad.Valor);
+                evento.description = Actividad.Descripcion;
+                evento.amountMax = Actividad.CupoMaximo;
+                evento.amount = 0;
 
                 _ApplicationDbContext.Update(evento);
                 await _ApplicationDbContext.SaveChangesAsync();
 
-                return $"Clase actualizada #${evento.Id} correctamente";
+                return $"Clase actualizada #${evento.id} correctamente";
             }
             catch (Exception)
             {
@@ -119,7 +118,7 @@ namespace Business.Services.Clases
 
 
         }
-        public async Task Validar(ClaseParemeterDTO Actividad, List<string> validations)
+        public async Task Validar(ClassParemeterDTO Actividad, List<string> validations)
         {
             if (Actividad.Dias == null || Actividad.Dias.Count == 0)
             {
@@ -151,32 +150,32 @@ namespace Business.Services.Clases
                 throw new ValidationException(validations);
             }
         }
-        public async Task<List<MiEventoView>> ObtenerClasesAprobadasXcoach(int IdCoach)
+        public async Task<List<MyClassView>> ObtenerClasesAprobadasXcoach(int IdCoach)
         {
-            var eventos = await CargarListaMisEventos(IdCoach, "APROBADO");
+            var eventos = await CargarListaMisEventos(IdCoach, (int)ApplicationStatusEnum.SOLICITUD_APROBADA);
 
             return eventos;
         }
-        public async Task<List<MiEventoView>> CargarListaMisEventos(int idCoach, string estado)
+        public async Task<List<MyClassView>> CargarListaMisEventos(int idCoach, int estado)
         {
-            List<MiEventoView> eventos = new List<MiEventoView>();
-            var listaBase = await _ApplicationDbContext.Eventos.Where(x => x.IdProfesor == idCoach && x.EstadoSolicitud== estado).ToListAsync();
-            foreach (Evento item in listaBase)
+            List<MyClassView> eventos = new List<MyClassView>();
+            var listaBase = await _ApplicationDbContext.Classes.Where(x => x.idCoach == idCoach && x.applicationStatus == estado).ToListAsync();
+            foreach (Class item in listaBase)
             {
-                MiEventoView evt = new MiEventoView();
-                evt.Id = item.Id;
-                evt.TipoEvento = await ObtenerNombreActividad(item.IdTipoEvento);
-                evt.FechaInicio = item.FechaInicio;
-                evt.FechaFin = item.FechaFin;
-                evt.Horario = item.Horario;
-                evt.Duracion = item.Duracion;
-                evt.Dias = item.Dias;
-                evt.Modalidad = await ObtenerNombreModalidad(item.IdModalidad);
-                evt.Valor = item.Valor;
-                evt.Descripcion = item.Descripcion;
-                evt.CupoMaximo = item.CupoMaximo;
-                evt.CupoActual = item.CupoActual;
-                evt.Profesor = await ObtenerNombreApeXCoach(item.IdProfesor);
+                MyClassView evt = new MyClassView();
+                evt.Id = item.id;
+                evt.TipoEvento = await ObtenerNombreActividad(item.idTypeClass);
+                evt.FechaInicio = item.dateFrom;
+                evt.FechaFin = item.dateTo;
+                evt.Horario = item.schedule;
+                evt.Duracion = item.duration;
+                evt.Dias = item.days;
+                evt.Modalidad = await ObtenerNombreModalidad(item.idModality);
+                evt.Valor = item.price;
+                evt.Descripcion = item.description;
+                evt.CupoMaximo = item.amountMax;
+                evt.CupoActual = item.amount;
+                evt.Profesor = await ObtenerNombreApeXCoach(item.idCoach);
                 eventos.Add(evt);
             }
             return eventos;
@@ -184,50 +183,50 @@ namespace Business.Services.Clases
 
 
 
-        public async Task<List<MiEventoView>> ObtenerClasesSolicitadasXCoach(string user)
+        public async Task<List<MyClassView>> ObtenerClasesSolicitadasXCoach(string user)
         {
-            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
-            var eventos = await CargarListaMisEventos(usuarioLogueado.Id, "PENDIENTE_APROBACION");
+            var usuarioLogueado = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
+            var eventos = await CargarListaMisEventos(usuarioLogueado.Id, (int)ApplicationStatusEnum.PENDIENTE_APROBACION);
 
             return eventos;
         }
 
-        public async Task<List<MiEventoView>> ObtenerClasesSolicitadas()
+        public async Task<List<MyClassView>> ObtenerClasesSolicitadas()
         {
-            List<MiEventoView> eventos = new List<MiEventoView>();
-            var listaBase = await _ApplicationDbContext.Eventos.Where(x => x.EstadoSolicitud.Trim().ToUpper() == "PENDIENTE_APROBACION").ToListAsync();
-            foreach (Evento item in listaBase)
+            List<MyClassView> eventos = new List<MyClassView>();
+            var listaBase = await _ApplicationDbContext.Classes.Where(x => x.applicationStatus == (int)ApplicationStatusEnum.PENDIENTE_APROBACION).ToListAsync();
+            foreach (Class item in listaBase)
             {
-                MiEventoView evt = new MiEventoView();
-                evt.Id = item.Id;
-                evt.TipoEvento = await ObtenerNombreActividad(item.IdTipoEvento);
-                evt.FechaInicio = item.FechaInicio;
-                evt.FechaFin = item.FechaFin;
-                evt.Horario = item.Horario;
-                evt.Duracion = item.Duracion;
-                evt.Dias = item.Dias;
-                evt.Modalidad = await ObtenerNombreModalidad(item.IdModalidad);
-                evt.Valor = item.Valor;
-                evt.Descripcion = item.Descripcion;
-                evt.CupoMaximo = item.CupoMaximo;
-                evt.CupoActual = item.CupoActual;
-                evt.Profesor = await ObtenerNombreApeXCoach(item.IdProfesor);
+                MyClassView evt = new MyClassView();
+                evt.Id = item.id;
+                evt.TipoEvento = await ObtenerNombreActividad(item.idTypeClass);
+                evt.FechaInicio = item.dateFrom;
+                evt.FechaFin = item.dateTo;
+                evt.Horario = item.schedule;
+                evt.Duracion = item.duration;
+                evt.Dias = item.days;
+                evt.Modalidad = await ObtenerNombreModalidad(item.idModality);
+                evt.Valor = item.price;
+                evt.Descripcion = item.description;
+                evt.CupoMaximo = item.amountMax;
+                evt.CupoActual = item.amount;
+                evt.Profesor = await ObtenerNombreApeXCoach(item.idCoach);
                 eventos.Add(evt);
             }
             return eventos;
         }
         private async Task<string> ObtenerNombreApeXCoach(int id)
         {
-            var usuario = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == id);
+            var usuario = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
             return $"{usuario.Nombre} {usuario.Apellido}";
         }
         private async Task<string> ObtenerNombreModalidad(int idModalidad)
         {
-            return (await _ApplicationDbContext.Modalidades.FirstOrDefaultAsync(x=> x.Id== idModalidad)).modalidad;
+            return (await _ApplicationDbContext.Modalities.FirstOrDefaultAsync(x=> x.Id== idModalidad)).modalidad;
         }
         private async Task<string> ObtenerNombreActividad(int idActividad)
         {
-            return (await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Id == idActividad)).Nombre;
+            return (await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == idActividad)).Nombre;
         }
     }
 }

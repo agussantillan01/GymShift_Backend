@@ -11,11 +11,11 @@ namespace Infrastructure.Models
     public class UsuarioLogin : IdentityUser<int>
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
         //public string Password { get; set; }
         //public string Email { get; set; }
-        public bool EsUserSistema { get; set; }
+        public bool isUserAdmin { get; set; }
         public List<RefreshToken> RefreshTokens { get; set; }
         public bool OwnsToken(string token)
         {
