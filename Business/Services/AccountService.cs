@@ -121,7 +121,7 @@ namespace Business.Services
         }
         public async Task<List<Role>> GetRoles()
         {
-            var list= await _ApplicationDbContext.Roles.Where(x=> x.Nombre.Trim().ToUpper() != "ADMIN").ToListAsync();
+            var list= await _ApplicationDbContext.Roles.Where(x=> x.role.Trim().ToUpper() != "ADMIN").ToListAsync();
             return list;
         }
         private async Task<string[]> getAllPermissions()
@@ -132,7 +132,7 @@ namespace Business.Services
         private async Task<string[]> getPermissionsXRole(string[] rolesTypes)
         {
             var roles = await _ApplicationDbContext.Roles
-                .Where(r => rolesTypes.Contains(r.Nombre.Trim()))
+                .Where(r => rolesTypes.Contains(r.role.Trim()))
                 .ToListAsync();
 
             var roleIds = roles.Select(r => r.Id).ToList();
@@ -148,7 +148,7 @@ namespace Business.Services
         private async Task<string[]> GetRolesXUsuario(int id)
         {
             var IdsRoles = await _ApplicationDbContext.UserByRol
-                .Where(x => x.IdUsuario == id)
+                .Where(x => x.IdUser == id)
                 .ToListAsync();
 
             var roles = new List<string>();
@@ -156,11 +156,11 @@ namespace Business.Services
             foreach (var item in IdsRoles)
             {
                 var rol = await _ApplicationDbContext.Roles
-                    .FirstOrDefaultAsync(x => x.Id == item.IdRol);
+                    .FirstOrDefaultAsync(x => x.Id == item.IdRole);
 
                 if (rol != null)
                 {
-                    roles.Add(rol.Nombre);
+                    roles.Add(rol.role);
                 }
             }
 
@@ -239,12 +239,12 @@ namespace Business.Services
         {
             try
             {
-                var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == rol.Trim().ToUpper());
+                var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.role.Trim().ToUpper() == rol.Trim().ToUpper());
 
                 UserByRole usXrol = new UserByRole()
                 {
-                    IdRol = role.Id,
-                    IdUsuario = newId
+                    IdRole = role.Id,
+                    IdUser = newId
                 };
 
                 await _ApplicationDbContext.UserByRol.AddAsync(usXrol);

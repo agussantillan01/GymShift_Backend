@@ -13,11 +13,11 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<Permission> builder)
         {
-            builder.ToTable("Permisos");
+            builder.ToTable("Permissions");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Type).HasColumnName("Tipo").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
-            builder.Property(x => x.Action).HasColumnName("Accion").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
-            builder.Property(x => x.Description).HasColumnName("Descripcion").HasColumnType("nvarchar").HasMaxLength(255).IsRequired();
+            builder.Property(x => x.Type).HasColumnName("Type").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Action).HasColumnName("Action").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Description).HasColumnName("description").HasColumnType("nvarchar").HasMaxLength(255).IsRequired();
             builder.Property(x => x.ClaimType).HasColumnName("ClaimType").HasColumnType("nvarchar").HasMaxLength(100).IsRequired();
             builder.Ignore(r => r.PermissionsByRole);
         }

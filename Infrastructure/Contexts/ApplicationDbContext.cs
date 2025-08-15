@@ -51,7 +51,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
             modelBuilder.ApplyConfiguration(new PermissionConfiguration());
-            modelBuilder.ApplyConfiguration(new PermisoXRolConfiguration());
+            modelBuilder.ApplyConfiguration(new PermissioByRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserByRoleConfiguration());
             modelBuilder.ApplyConfiguration(new EmailServiceConfiguration());
             modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());

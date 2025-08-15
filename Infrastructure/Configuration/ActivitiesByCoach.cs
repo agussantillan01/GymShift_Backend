@@ -13,7 +13,7 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<ActivityByCoach> builder)
         {
-            builder.ToTable("ACTIVIDADESXCOACHS");
+            builder.ToTable("activitiesByCoachs");
 
             builder.HasKey(a => a.Id);
 
@@ -22,11 +22,11 @@ namespace Infrastructure.Configuration
                 .ValueGeneratedOnAdd();
 
             builder.Property(a => a.IdUser)
-                .HasColumnName("IDUSUARIO")
+                .HasColumnName("idUser")
                 .IsRequired();
 
             builder.Property(a => a.IdActivity)
-                .HasColumnName("IDACTIVIDAD")
+                .HasColumnName("idActivity")
                 .IsRequired();
         }
     

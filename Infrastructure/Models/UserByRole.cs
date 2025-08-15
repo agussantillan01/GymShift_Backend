@@ -9,7 +9,7 @@ namespace Infrastructure.Models
     public class UserByRole
     {
         public int Id { get; set; }
-        public int IdUsuario { get; set; }
-        public int IdRol { get; set; }
+        public int IdUser { get; set; }
+        public int IdRole { get; set; }
     }
 }

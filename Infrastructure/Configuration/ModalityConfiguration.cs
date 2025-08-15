@@ -13,7 +13,7 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<Modality> builder)
         {
-            builder.ToTable("MODALIDADES");
+            builder.ToTable("Modalities");
             builder.HasKey(x => x.Id);
 
             builder.Property(x => x.modality).HasColumnName("MODALIDAD").HasColumnType("varchar").HasMaxLength(500).IsRequired();

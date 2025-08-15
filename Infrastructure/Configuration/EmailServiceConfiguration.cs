@@ -13,7 +13,7 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<EmailService> builder)
         {
-            builder.ToTable("SERVICIOSEMAIL");
+            builder.ToTable("EmailService");
             builder.HasKey(e => e.Id);
 
             builder.Property(e => e.Id).HasColumnName("ID").ValueGeneratedOnAdd();

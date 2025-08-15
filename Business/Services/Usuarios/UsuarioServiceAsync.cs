@@ -119,10 +119,10 @@ namespace Business.Services.Usuarios
 
         private string obtenerRol(int id)
         {
-            var userXRol = _ApplicationDbContext.UserByRol.FirstOrDefault(x => x.IdUsuario == id);
-            var rol = _ApplicationDbContext.Roles.FirstOrDefault(x => x.Id == userXRol.IdRol);
+            var userXRol = _ApplicationDbContext.UserByRol.FirstOrDefault(x => x.IdUser == id);
+            var rol = _ApplicationDbContext.Roles.FirstOrDefault(x => x.Id == userXRol.IdRole);
 
-            return rol.Nombre.ToLower();
+            return rol.role.ToLower();
         }
 
         private async Task<List<string>> ObtenerActividades(int id)
@@ -141,23 +141,23 @@ namespace Business.Services.Usuarios
         {
             try
             {
-                var rolDeUsuarioPrincipal = await _ApplicationDbContext.UserByRol.FirstOrDefaultAsync(x => x.IdUsuario == id);
-                var objRolAntes = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == rolDeUsuarioPrincipal.IdRol); // objeto rol viejo
+                var rolDeUsuarioPrincipal = await _ApplicationDbContext.UserByRol.FirstOrDefaultAsync(x => x.IdUser == id);
+                var objRolAntes = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == rolDeUsuarioPrincipal.IdRole); // objeto rol viejo
                 await SeteoRol(id, rol);
-                var objRolNuevo = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == rol); //objeto del nuevo Rol
+                var objRolNuevo = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.role.ToLower().Trim() == rol); //objeto del nuevo Rol
 
 
-                if (objRolNuevo.Nombre.ToLower().Trim() == "coach" && objRolAntes.Nombre.ToLower().Trim() != "coach")
+                if (objRolNuevo.role.ToLower().Trim() == "coach" && objRolAntes.role.ToLower().Trim() != "coach")
                 {
                     //Actualizo el usuario, de usuario normal a entrenador
                     await eliminoActividades(id);
                 }
-                else if (objRolNuevo.Nombre.ToLower().Trim() == "coach" && objRolAntes.Nombre.ToLower().Trim() == "coach")
+                else if (objRolNuevo.role.ToLower().Trim() == "coach" && objRolAntes.role.ToLower().Trim() == "coach")
                 {
                     //Modifica usuario de entrenador a tipo entrenador, deberia modificar solamente las actividades
                     await ActualizoActividades(id, actividadaes);
                 }
-                else if (objRolAntes.Nombre.ToLower().Trim() == "coach" && objRolNuevo.Nombre.ToLower().Trim() != "coach")
+                else if (objRolAntes.role.ToLower().Trim() == "coach" && objRolNuevo.role.ToLower().Trim() != "coach")
                 {
                     //Modifica usuario entrenador a alumno
                     await InsertActividades(id, actividadaes);
@@ -206,18 +206,18 @@ namespace Business.Services.Usuarios
         }
         private async Task EliminaRol(int idUsuario)
         {
-            var userRol = await _ApplicationDbContext.UserByRol.FirstOrDefaultAsync(x => x.IdUsuario == idUsuario);
+            var userRol = await _ApplicationDbContext.UserByRol.FirstOrDefaultAsync(x => x.IdUser == idUsuario);
 
             _ApplicationDbContext.UserByRol.Remove(userRol);
             await _ApplicationDbContext.SaveChangesAsync();
         }
         private async Task InsertRoles(int idUsuario, string nombreRol)
         {
-            var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == nombreRol.ToLower().Trim());
+            var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.role.ToLower().Trim() == nombreRol.ToLower().Trim());
 
             UserByRole usXrol = new UserByRole();
-            usXrol.IdUsuario = idUsuario;
-            usXrol.IdRol = rol.Id;
+            usXrol.IdUser = idUsuario;
+            usXrol.IdRole = rol.Id;
             await _ApplicationDbContext.UserByRol.AddAsync(usXrol);
             await _ApplicationDbContext.SaveChangesAsync();
         }

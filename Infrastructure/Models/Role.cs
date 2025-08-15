@@ -9,7 +9,7 @@ namespace Infrastructure.Models
     public class Role
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
+        public string role { get; set; }
 
         //public ICollection<PermisoXRol> permisosXrol { get; set; }
     }

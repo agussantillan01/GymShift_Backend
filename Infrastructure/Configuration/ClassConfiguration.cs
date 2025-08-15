@@ -13,21 +13,21 @@ namespace Infrastructure.Configuration
     {
         public void Configure(EntityTypeBuilder<Class> builder)
         {
-            builder.ToTable("EVENTOS");
+            builder.ToTable("Classes");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.idTypeClass).HasColumnName("IDTIPOEVENTO").HasColumnType("int").IsRequired();
-            builder.Property(x => x.DateFrom).HasColumnName("FECHAINICIO").HasColumnType("datetime").IsRequired();
-            builder.Property(x => x.DateTo).HasColumnName("FECHAFIN").HasColumnType("datetime").IsRequired();
-            builder.Property(x => x.Schedule).HasColumnName("HORARIO").HasColumnType("Varchar").HasMaxLength(5).IsRequired();
-            builder.Property(x => x.Duration).HasColumnName("DURACION").HasColumnType("varchar").HasMaxLength(10).IsRequired();
-            builder.Property(x => x.Days).HasColumnName("DIAS").HasColumnType("varchar").HasMaxLength(500).IsRequired();
-            builder.Property(x => x.IdModality).HasColumnName("IDMODALIDAD").HasColumnType("int").IsRequired();
-            builder.Property(x => x.Price).HasColumnName("VALOR").HasColumnType("money").IsRequired();
-            builder.Property(x => x.Description).HasColumnName("DESCRIPCION").HasColumnType("varchar").HasMaxLength(500).IsRequired();
-            builder.Property(x => x.AmountMax).HasColumnName("CUPOMAXIMO").HasColumnType("int").IsRequired();
-            builder.Property(x => x.Amount).HasColumnName("CUPODEMOMENTO").HasColumnType("int").IsRequired();
-            builder.Property(x => x.IdCoach).HasColumnName("IDUSUARIO").HasColumnType("int").IsRequired();
-            builder.Property(x => x.ApplicationStatus).HasColumnName("ESTADOSOLICITUD").HasColumnType("varchar").HasMaxLength(100);
+            builder.Property(x => x.idTypeClass).HasColumnName("idTypeClass").HasColumnType("int").IsRequired();
+            builder.Property(x => x.DateFrom).HasColumnName("hourFrom").HasColumnType("datetime").IsRequired();
+            builder.Property(x => x.DateTo).HasColumnName("hourTo").HasColumnType("datetime").IsRequired();
+            builder.Property(x => x.Schedule).HasColumnName("schedules").HasColumnType("Varchar").HasMaxLength(5).IsRequired();
+            builder.Property(x => x.Duration).HasColumnName("duratiom").HasColumnType("varchar").HasMaxLength(10).IsRequired();
+            builder.Property(x => x.Days).HasColumnName("days").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.IdModality).HasColumnName("idModality").HasColumnType("int").IsRequired();
+            builder.Property(x => x.Price).HasColumnName("price").HasColumnType("money").IsRequired();
+            builder.Property(x => x.Description).HasColumnName("descriiption").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.AmountMax).HasColumnName("amountMax").HasColumnType("int").IsRequired();
+            builder.Property(x => x.Amount).HasColumnName("amount").HasColumnType("int").IsRequired();
+            builder.Property(x => x.IdCoach).HasColumnName("idUser").HasColumnType("int").IsRequired();
+            builder.Property(x => x.ApplicationStatus).HasColumnName("idApplicationStatus").HasColumnType("varchar").HasMaxLength(100);
 
         }
     }

@@ -16,8 +16,8 @@ namespace Infrastructure.Configuration
             builder.ToTable("Roles");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Nombre)
-              .HasColumnName("Rol").HasColumnType("varchar").HasMaxLength(500)
+            builder.Property(x => x.role)
+              .HasColumnName("Role").HasColumnType("varchar").HasMaxLength(500)
               .IsRequired();
 
            //builder.Ignore(r => r.permisosXrol);
