@@ -22,8 +22,8 @@ namespace Infrastructure.Configuration
                            //.OnDelete(DeleteBehavior.Cascade);
 
             // Relación uno a muchos entre PermisoXRol y Permiso
-            builder.HasOne(pr => pr.Permiso)
-                   .WithMany(p => p.PermisosXRol) // Un Permiso tiene muchos PermisosXRol
+            builder.HasOne(pr => pr.Permission)
+                   .WithMany(p => p.PermissionsByRole) // Un Permiso tiene muchos PermisosXRol
                    .HasForeignKey(pr => pr.IdPermiso) // Clave foránea
                    .OnDelete(DeleteBehavior.Cascade);
         }

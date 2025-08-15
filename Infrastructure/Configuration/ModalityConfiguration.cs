@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class ModalidadConfiguration : IEntityTypeConfiguration<Modality>
+    public class ModalityConfiguration : IEntityTypeConfiguration<Modality>
     {
         public void Configure(EntityTypeBuilder<Modality> builder)
         {
             builder.ToTable("MODALIDADES");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.modalidad).HasColumnName("MODALIDAD").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.modality).HasColumnName("MODALIDAD").HasColumnType("varchar").HasMaxLength(500).IsRequired();
         }
     }
 }

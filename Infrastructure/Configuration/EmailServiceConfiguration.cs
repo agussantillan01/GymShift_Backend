@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class ServicioEmailConfiguration : IEntityTypeConfiguration<EmailService>
+    public class EmailServiceConfiguration : IEntityTypeConfiguration<EmailService>
     {
         public void Configure(EntityTypeBuilder<EmailService> builder)
         {
@@ -17,12 +17,12 @@ namespace Infrastructure.Configuration
             builder.HasKey(e => e.Id);
 
             builder.Property(e => e.Id).HasColumnName("ID").ValueGeneratedOnAdd();
-            builder.Property(e => e.DescripcionEmail).HasColumnName("DESCRIPCIONEMAIL").HasMaxLength(500).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.EmailEmisor).HasColumnName("EMAILEMISOR").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.EmailDescription).HasColumnName("DESCRIPCIONEMAIL").HasMaxLength(500).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.emailSender).HasColumnName("EMAILEMISOR").HasMaxLength(250).IsUnicode(true).IsRequired(false);
             builder.Property(e => e.EmailReceptor).HasColumnName("EMAILRECEPTOR").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.Asunto).HasColumnName("ASUNTO").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.Cuerpo).HasColumnName("CUERPO").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.FechaEnvio).HasColumnName("FECHAENVIO").IsRequired();
+            builder.Property(e => e.Subject).HasColumnName("ASUNTO").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.Body).HasColumnName("CUERPO").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.DateSent).HasColumnName("FECHAENVIO").IsRequired();
 
         }
     }

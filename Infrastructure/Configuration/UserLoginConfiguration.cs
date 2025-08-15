@@ -16,8 +16,8 @@ namespace Infrastructure.Configuration
             builder.ToTable("Users");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.firstName).HasColumnName("firstName").HasColumnType("varchar").HasMaxLength(500).IsRequired();
-            builder.Property(x => x.lastName).HasColumnName("lastName").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.FirstName).HasColumnName("firstName").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.LastName).HasColumnName("lastName").HasColumnType("varchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.PasswordHash).HasColumnName("PasswordHash").HasColumnType("nvarchar").IsRequired();
             builder.Property(x => x.UserName).HasColumnName("UserName").HasMaxLength(500).HasColumnType("nvarchar").IsRequired();
             builder.Property(x => x.NormalizedUserName).HasColumnName("NormalizedUserName").HasColumnType("nvarchar").HasMaxLength(500).IsRequired();
@@ -25,7 +25,7 @@ namespace Infrastructure.Configuration
             builder.Property(x => x.Email).HasColumnName("Email").HasMaxLength(500).HasColumnType("nvarchar").IsRequired();
             builder.Property(x => x.NormalizedEmail).HasColumnName("NormalizedEmail").HasColumnType("nvarchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.SecurityStamp).HasColumnName("SecurityStamp").HasColumnType("nvarchar").IsRequired(false);
-            builder.Property(x => x.isUserAdmin).HasColumnName("isUserAdmin").HasColumnType("bit").IsRequired();
+            builder.Property(x => x.IsUserAdmin).HasColumnName("IsUserAdmin").HasColumnType("bit").IsRequired();
 
 
             //builder.Ignore(c => c.NormalizedUserName);

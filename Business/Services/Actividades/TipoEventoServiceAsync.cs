@@ -27,27 +27,27 @@ namespace Business.Services.Actividades
 
         public async Task<List<TypeOfClass>> GetTiposEventos()
         {
-            return await _ApplicationDbContext.TiposDeEventos.ToListAsync();
+            return await _ApplicationDbContext.TypesClasses.ToListAsync();
         }
         public async Task<List<TypeOfClass>> ObtenerDeportesXcoach(string usernameLogueado)
         {
-            var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == usernameLogueado);
+            var usuarioLogueado = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.UserName.Trim() == usernameLogueado);
 
             if (usuarioLogueado == null)
             {
                 return new List<TypeOfClass>();
             }
 
-            var deportesXusuario = await _ApplicationDbContext.ActividadesXEntrenador
-                .Where(ae => ae.IdUsuario == usuarioLogueado.Id) 
+            var deportesXusuario = await _ApplicationDbContext.ActivityByCoach
+                .Where(ae => ae.IdUser == usuarioLogueado.Id) 
                 .Join(
-                    _ApplicationDbContext.TiposDeEventos,  
-                    ae => ae.IdActividad,             
+                    _ApplicationDbContext.TypesClasses,  
+                    ae => ae.IdActivity,             
                     td => td.Id,                       
                     (ae, td) => new TypeOfClass         
                     {
                         Id = td.Id,
-                        Nombre = td.Nombre
+                        Type = td.Type
                     }
                 )
                 .Distinct()

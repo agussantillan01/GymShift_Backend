@@ -50,14 +50,14 @@ namespace Infrastructure.Contexts
             //llamo a los Configurations
             modelBuilder.ApplyConfiguration(new UserLoginConfiguration());
             modelBuilder.ApplyConfiguration(new RoleConfiguration());
-            modelBuilder.ApplyConfiguration(new PermisoConfiguration());
+            modelBuilder.ApplyConfiguration(new PermissionConfiguration());
             modelBuilder.ApplyConfiguration(new PermisoXRolConfiguration());
-            modelBuilder.ApplyConfiguration(new UsuarioXRolConfiguration());
-            modelBuilder.ApplyConfiguration(new ServicioEmailConfiguration());
+            modelBuilder.ApplyConfiguration(new UserByRoleConfiguration());
+            modelBuilder.ApplyConfiguration(new EmailServiceConfiguration());
             modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());
-            modelBuilder.ApplyConfiguration(new ActividadesXEntrenadorConfiguration());
-            modelBuilder.ApplyConfiguration(new EventoConfiguration());
-            modelBuilder.ApplyConfiguration(new ModalidadConfiguration());
+            modelBuilder.ApplyConfiguration(new ActivitiesByCoach());
+            modelBuilder.ApplyConfiguration(new ClassConfiguration());
+            modelBuilder.ApplyConfiguration(new ModalityConfiguration());
         }
     }
 }

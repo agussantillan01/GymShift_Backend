@@ -30,7 +30,7 @@ namespace GymShift.Controllers.Login
         [HttpPost("GetUsuario")]
         public async Task<UserLogin> GetUsuario(AuthenticationRequest request)
         {
-            return await _accountService.GetUsuario(request);
+            return await _accountService.GetUser(request);
         }
         
         [HttpGet("GetRoles")]

@@ -38,23 +38,23 @@ namespace Business.Services.Usuarios
 
         public async Task<List<UserView>> ObtenerUsuarios(string userNameLogueado, int pageNumber, int pageSize, string filter)
         {
-            var usuarioLogueado = await _ApplicationDbContext.Usuarios
+            var usuarioLogueado = await _ApplicationDbContext.Users
                 .FirstOrDefaultAsync(x => x.UserName.Trim() == userNameLogueado);
 
             if (usuarioLogueado == null)
                 return new List<UserView>();
 
-            var query = _ApplicationDbContext.Usuarios
+            var query = _ApplicationDbContext.Users
                 .Where(x => x.Id != usuarioLogueado.Id);
 
-            if (!usuarioLogueado.EsUserSistema)
-                query = query.Where(x => !x.EsUserSistema);
+            if (!usuarioLogueado.IsUserAdmin)
+                query = query.Where(x => !x.IsUserAdmin);
 
             // Aplicar filtro si no está vacío o nulo
             if (!string.IsNullOrWhiteSpace(filter))
             {
                 string filterLower = filter.Trim().ToLower();
-                query = query.Where(x => x.Nombre.ToLower().Contains(filterLower) ||
+                query = query.Where(x => x.FirstName.ToLower().Contains(filterLower) ||
                                          x.Email.ToLower().Contains(filterLower));
             }
 
@@ -66,8 +66,8 @@ namespace Business.Services.Usuarios
             var lista = listUsers.Select(item => new UserView()
             {
                 Id = item.Id,
-                Nombre = item.Nombre,
-                Apellido = item.Apellido,
+                Nombre = item.FirstName,
+                Apellido = item.LastName,
                 Email = item.Email ?? "No Contiene",
                 Rol = obtenerRol(item.Id)
             }).ToList();
@@ -78,11 +78,11 @@ namespace Business.Services.Usuarios
         public async Task<UserEdit> GetUsuario(int idUsuario)
         {
             UserEdit usuarioReturn = new UserEdit();
-            var usuario = await _ApplicationDbContext.Usuarios.SingleOrDefaultAsync(x => x.Id == idUsuario);
+            var usuario = await _ApplicationDbContext.Users.SingleOrDefaultAsync(x => x.Id == idUsuario);
 
             usuarioReturn.Id = usuario.Id;
-            usuarioReturn.Nombre = usuario.Nombre;
-            usuarioReturn.Apellido = usuario.Apellido;
+            usuarioReturn.Nombre = usuario.FirstName;
+            usuarioReturn.Apellido = usuario.LastName;
             usuarioReturn.Email = usuario.Email == null ? "" : usuario.Email;
             usuarioReturn.UserName = usuario.UserName == null ? "" : usuario.UserName;
             usuarioReturn.Rol = obtenerRol(usuario.Id);
@@ -96,14 +96,14 @@ namespace Business.Services.Usuarios
 
             try
             {
-                var user = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.Id == usuario.Id);
-                user.Nombre = usuario.Nombre;
-                user.Apellido = usuario.Apellido;
+                var user = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == usuario.Id);
+                user.FirstName = usuario.Nombre;
+                user.LastName = usuario.Apellido;
                 user.Email = usuario.Email.Trim();
                 user.NormalizedEmail = usuario.Email.ToUpper().Trim();
 
                 await SeteoRolesYProfesiones(usuario.Id, usuario.Rol, usuario.Actividades);
-                _ApplicationDbContext.Usuarios.Update(user);
+                _ApplicationDbContext.Users.Update(user);
                 await _ApplicationDbContext.SaveChangesAsync();
                 return new Response<string>(usuario.Id.ToString(), message: $"Usuario Modificado.");
             }
@@ -119,7 +119,7 @@ namespace Business.Services.Usuarios
 
         private string obtenerRol(int id)
         {
-            var userXRol = _ApplicationDbContext.UsuarioXRol.FirstOrDefault(x => x.IdUsuario == id);
+            var userXRol = _ApplicationDbContext.UserByRol.FirstOrDefault(x => x.IdUsuario == id);
             var rol = _ApplicationDbContext.Roles.FirstOrDefault(x => x.Id == userXRol.IdRol);
 
             return rol.Nombre.ToLower();
@@ -127,12 +127,12 @@ namespace Business.Services.Usuarios
 
         private async Task<List<string>> ObtenerActividades(int id)
         {
-            var actXEntrenador = await (_ApplicationDbContext.ActividadesXEntrenador.Where(x => x.IdUsuario == id)).ToListAsync();
+            var actXEntrenador = await (_ApplicationDbContext.ActivityByCoach.Where(x => x.IdUser == id)).ToListAsync();
             List<string> actividades = new List<string>();
             foreach (var item in actXEntrenador)
             {
-                var objActividad = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Id == item.IdActividad);
-                actividades.Add(objActividad.Nombre);
+                var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == item.IdActivity);
+                actividades.Add(objActividad.Type);
             }
             return actividades;
         }
@@ -141,7 +141,7 @@ namespace Business.Services.Usuarios
         {
             try
             {
-                var rolDeUsuarioPrincipal = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == id);
+                var rolDeUsuarioPrincipal = await _ApplicationDbContext.UserByRol.FirstOrDefaultAsync(x => x.IdUsuario == id);
                 var objRolAntes = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Id == rolDeUsuarioPrincipal.IdRol); // objeto rol viejo
                 await SeteoRol(id, rol);
                 var objRolNuevo = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == rol); //objeto del nuevo Rol
@@ -195,20 +195,20 @@ namespace Business.Services.Usuarios
         }
         private async Task eliminoActividades(int idUsuario)
         {
-            var actXus = await (_ApplicationDbContext.ActividadesXEntrenador.Where(x => x.IdUsuario == idUsuario)).ToListAsync();
+            var actXus = await (_ApplicationDbContext.ActivityByCoach.Where(x => x.IdUser == idUsuario)).ToListAsync();
             if (actXus.Count > 0)
             {
 
 
-                _ApplicationDbContext.ActividadesXEntrenador.RemoveRange(actXus);
+                _ApplicationDbContext.ActivityByCoach.RemoveRange(actXus);
                 await _ApplicationDbContext.SaveChangesAsync();
             }
         }
         private async Task EliminaRol(int idUsuario)
         {
-            var userRol = await _ApplicationDbContext.UsuarioXRol.FirstOrDefaultAsync(x => x.IdUsuario == idUsuario);
+            var userRol = await _ApplicationDbContext.UserByRol.FirstOrDefaultAsync(x => x.IdUsuario == idUsuario);
 
-            _ApplicationDbContext.UsuarioXRol.Remove(userRol);
+            _ApplicationDbContext.UserByRol.Remove(userRol);
             await _ApplicationDbContext.SaveChangesAsync();
         }
         private async Task InsertRoles(int idUsuario, string nombreRol)
@@ -218,7 +218,7 @@ namespace Business.Services.Usuarios
             UserByRole usXrol = new UserByRole();
             usXrol.IdUsuario = idUsuario;
             usXrol.IdRol = rol.Id;
-            await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);
+            await _ApplicationDbContext.UserByRol.AddAsync(usXrol);
             await _ApplicationDbContext.SaveChangesAsync();
         }
         private async Task InsertActividades(int idUsuario, List<string> actividades)
@@ -226,15 +226,15 @@ namespace Business.Services.Usuarios
             List<ActivityByCoach> listInsert = new List<ActivityByCoach>();
             foreach (var item in actividades)
             {
-                var objActividad = await _ApplicationDbContext.TiposDeEventos.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == item.Trim().ToUpper());
+                var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Type.Trim().ToUpper() == item.Trim().ToUpper());
                 ActivityByCoach actXEntrenador = new ActivityByCoach();
-                actXEntrenador.IdUsuario = idUsuario;
-                actXEntrenador.IdActividad = objActividad.Id;
+                actXEntrenador.IdUser = idUsuario;
+                actXEntrenador.IdActivity = objActividad.Id;
 
                 listInsert.Add(actXEntrenador);
             }
 
-            await _ApplicationDbContext.ActividadesXEntrenador.AddRangeAsync(listInsert);
+            await _ApplicationDbContext.ActivityByCoach.AddRangeAsync(listInsert);
             await _ApplicationDbContext.SaveChangesAsync();
         }
         #endregion

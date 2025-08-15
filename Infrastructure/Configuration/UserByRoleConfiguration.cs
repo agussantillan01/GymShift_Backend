@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class UsuarioXRolConfiguration : IEntityTypeConfiguration<UserByRole>
+    public class UserByRoleConfiguration : IEntityTypeConfiguration<UserByRole>
     {
         public void Configure(EntityTypeBuilder<UserByRole> builder)
         {

@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class PermisoConfiguration : IEntityTypeConfiguration<Permission>
+    public class PermissionConfiguration : IEntityTypeConfiguration<Permission>
     {
         public void Configure(EntityTypeBuilder<Permission> builder)
         {
             builder.ToTable("Permisos");
             builder.HasKey(x => x.Id);
-            builder.Property(x => x.Tipo).HasColumnName("Tipo").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
-            builder.Property(x => x.Accion).HasColumnName("Accion").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
-            builder.Property(x => x.Descripcion).HasColumnName("Descripcion").HasColumnType("nvarchar").HasMaxLength(255).IsRequired();
+            builder.Property(x => x.Type).HasColumnName("Tipo").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Action).HasColumnName("Accion").HasColumnType("nvarchar").HasMaxLength(50).IsRequired();
+            builder.Property(x => x.Description).HasColumnName("Descripcion").HasColumnType("nvarchar").HasMaxLength(255).IsRequired();
             builder.Property(x => x.ClaimType).HasColumnName("ClaimType").HasColumnType("nvarchar").HasMaxLength(100).IsRequired();
-            builder.Ignore(r => r.PermisosXRol);
+            builder.Ignore(r => r.PermissionsByRole);
         }
     }
 }

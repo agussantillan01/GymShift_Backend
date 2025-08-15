@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class ActividadesXEntrenadorConfiguration : IEntityTypeConfiguration<ActivityByCoach>
+    public class ActivitiesByCoach : IEntityTypeConfiguration<ActivityByCoach>
     {
         public void Configure(EntityTypeBuilder<ActivityByCoach> builder)
         {

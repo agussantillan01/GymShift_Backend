@@ -31,7 +31,7 @@ namespace Infrastructure.Features
 
             var userName = context.User?.Identity?.Name;
 
-            var user = _Application.Usuarios.Where(x => x.Nombre == userName);
+            var user = _Application.Users.Where(x => x.FirstName == userName);
             if (user != null)
             {
                 context.Succeed(requirement);

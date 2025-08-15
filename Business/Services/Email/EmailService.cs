@@ -69,12 +69,12 @@ namespace Business.Services.Email
 
             Infrastructure.Models.EmailService servicioEmail = new Infrastructure.Models.EmailService()
             {
-                DescripcionEmail = "Generacion de clave",
-                EmailEmisor = "agusantillan16@gmail.com",
+                EmailDescription = "Generacion de clave",
+                emailSender = "agusantillan16@gmail.com",
                 EmailReceptor = email,
-                Asunto = asunto,
-                Cuerpo = body,
-                FechaEnvio = DateTime.Now
+                Subject = asunto,
+                Body = body,
+                DateSent = DateTime.Now
             };
 
             await _applicationDbContext.EmailServices.AddAsync(servicioEmail);

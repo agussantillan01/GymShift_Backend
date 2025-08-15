@@ -104,9 +104,9 @@ namespace Business.Services
             var user = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.Id == id);
             Usuario us = new Usuario();
             us.Id = id;
-            us.Apellido = user.lastName;
-            us.Nombre = user.firstName;
-            if (user.isUserAdmin)
+            us.Apellido = user.LastName;
+            us.Nombre = user.FirstName;
+            if (user.IsUserAdmin)
             {
                 us.Role = ["ADMIN"];
                 us.Permissions = await getAllPermissions();
@@ -139,7 +139,7 @@ namespace Business.Services
 
             var permissionsDB = await _ApplicationDbContext.PermissionByRole
                 .Where(pxr => roleIds.Contains(pxr.IdRol))
-                .Select(pxr => pxr.Permiso.ClaimType)
+                .Select(pxr => pxr.Permission.ClaimType)
                 .Distinct()
                 .ToArrayAsync();
 
@@ -208,8 +208,8 @@ namespace Business.Services
             var user = new UserLogin
             {
                 Email = request.Email,
-                firstName = request.FirstName,
-                lastName = request.LastName,
+                FirstName = request.FirstName,
+                LastName = request.LastName,
                 UserName = request.UserName,
                 NormalizedEmail = request.Email.ToUpper(),
                 NormalizedUserName = request.UserName.ToUpper()
@@ -222,7 +222,7 @@ namespace Business.Services
             if (result.Succeeded)
             {
                 await SeteoRolActividades(user.Id, request.Rol, request.Actividades);
-                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, request.UserName, user.firstName);
+                await _IserviceEmail.EnvioMail(user.Email.Trim(), "EMAIL_BIENVENIDA", PasswordDesordenada, request.UserName, user.FirstName);
 
 
                 return new Response<string>(user.Id.ToString(), message: $"Usuario registrado.");
@@ -335,7 +335,7 @@ namespace Business.Services
                  new Claim(JwtRegisteredClaimNames.UniqueName, user.UserName.Trim()),
                  new Claim("http://schemas.xmlsoap.org/ws/2005/05/identity/claims/name", user.UserName.Trim()),
                  new Claim("uid", user.Id.ToString()),
-                 new Claim("isUserAdmin", user.isUserAdmin.ToString()),
+                 new Claim("IsUserAdmin", user.IsUserAdmin.ToString()),
                  new Claim("ip", ipAddress),
                  //new Claim("idEmpresa", idEmpresa.Trim())
             };

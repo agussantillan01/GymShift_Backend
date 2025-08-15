@@ -8,19 +8,19 @@ namespace Infrastructure.Models
 {
     public class Class
     {
-        public int id { get; set; }
+        public int Id { get; set; }
         public int idTypeClass { get; set; }
-        public DateTime dateFrom { get; set; }
-        public DateTime dateTo { get; set; }
-        public string schedule { get; set; }
-        public string duration { get; set; }
-        public string days { get; set; }
-        public int idModality { get; set; }
-        public decimal price { get; set; }
-        public string description { get; set; }
-        public int amountMax { get; set; }
-        public int amount { get; set; }
-        public int idCoach { get; set; }
-        public int applicationStatus { get; set; }
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
+        public string Schedule { get; set; }
+        public string Duration { get; set; }
+        public string Days { get; set; }
+        public int IdModality { get; set; }
+        public decimal Price { get; set; }
+        public string Description { get; set; }
+        public int AmountMax { get; set; }
+        public int Amount { get; set; }
+        public int IdCoach { get; set; }
+        public int ApplicationStatus { get; set; }
     }
 }
