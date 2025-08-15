@@ -34,7 +34,7 @@ namespace Infrastructure.CustomIdentity
             try
             {
                 var dominio = store.ObtenerDominio();
-                return dominio.Valor;
+                return dominio.Value;
             }
             catch (Exception ex)
             {
@@ -64,7 +64,7 @@ namespace Infrastructure.CustomIdentity
             try
             {
                 var dominio = store.ObtenerDominio();
-                return !string.IsNullOrEmpty(dominio.Valor);
+                return !string.IsNullOrEmpty(dominio.Value);
             }
             catch (Exception)
             {

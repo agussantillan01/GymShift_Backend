@@ -11,8 +11,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.CustomIdentity
 {
-    public class ApplicationUserStore : UserStore<UsuarioLogin, Grupo, ApplicationDbContext, int,
-        PermisoUsuario, GrupoUsuario, Microsoft.AspNetCore.Identity.IdentityUserLogin<int>, IdentityUserToken<int>, IdentityRoleClaim<int>>, IApplicationUserStore
+    public class ApplicationUserStore : UserStore<UserLogin, Group, ApplicationDbContext, int,
+        PermissionUser, GroupUser, Microsoft.AspNetCore.Identity.IdentityUserLogin<int>, IdentityUserToken<int>, IdentityRoleClaim<int>>, IApplicationUserStore
     {
         public ApplicationUserStore(ApplicationDbContext context)
             : base(context)
@@ -20,7 +20,7 @@ namespace Infrastructure.CustomIdentity
 
         }
 
-        public Definicion ObtenerDominio()
+        public Definition ObtenerDominio()
         {
             throw new NotImplementedException();
         }

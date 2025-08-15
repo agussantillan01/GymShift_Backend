@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class UserLoginConfiguration : IEntityTypeConfiguration<UsuarioLogin>
+    public class UserLoginConfiguration : IEntityTypeConfiguration<UserLogin>
     {
-        public void Configure(EntityTypeBuilder<UsuarioLogin> builder)
+        public void Configure(EntityTypeBuilder<UserLogin> builder)
         {
             builder.ToTable("Users");
             builder.HasKey(x => x.Id);

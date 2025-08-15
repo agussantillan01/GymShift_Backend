@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class TipoEvento
+    public class TypeOfClass
     {
         public int Id { get; set; }
         public string Type { get; set; }

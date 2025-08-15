@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class ServicioEmailConfiguration : IEntityTypeConfiguration<ServicioEmail>
+    public class ServicioEmailConfiguration : IEntityTypeConfiguration<EmailService>
     {
-        public void Configure(EntityTypeBuilder<ServicioEmail> builder)
+        public void Configure(EntityTypeBuilder<EmailService> builder)
         {
             builder.ToTable("SERVICIOSEMAIL");
             builder.HasKey(e => e.Id);

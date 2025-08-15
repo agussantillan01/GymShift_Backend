@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class PermisoXRolConfiguration : IEntityTypeConfiguration<PermisoXRol>
+    public class PermisoXRolConfiguration : IEntityTypeConfiguration<PermissionByRole>
     {
-        public void Configure(EntityTypeBuilder<PermisoXRol> builder)
+        public void Configure(EntityTypeBuilder<PermissionByRole> builder)
         {
             builder.ToTable("PermisosXRol");
             builder.HasKey(pr => new { pr.IdRol, pr.IdPermiso });

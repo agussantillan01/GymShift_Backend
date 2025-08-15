@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class ModalidadConfiguration : IEntityTypeConfiguration<Modalidad>
+    public class ModalidadConfiguration : IEntityTypeConfiguration<Modality>
     {
-        public void Configure(EntityTypeBuilder<Modalidad> builder)
+        public void Configure(EntityTypeBuilder<Modality> builder)
         {
             builder.ToTable("MODALIDADES");
             builder.HasKey(x => x.Id);

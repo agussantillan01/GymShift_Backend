@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class UsuarioLogin : IdentityUser<int>
+    public class UserLogin : IdentityUser<int>
     {
         public int Id { get; set; }
         public string firstName { get; set; }

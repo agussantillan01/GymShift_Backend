@@ -215,7 +215,7 @@ namespace Business.Services.Usuarios
         {
             var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.ToLower().Trim() == nombreRol.ToLower().Trim());
 
-            UsuarioXRol usXrol = new UsuarioXRol();
+            UserByRole usXrol = new UserByRole();
             usXrol.IdUsuario = idUsuario;
             usXrol.IdRol = rol.Id;
             await _ApplicationDbContext.UsuarioXRol.AddAsync(usXrol);

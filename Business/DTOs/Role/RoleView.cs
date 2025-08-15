@@ -10,6 +10,6 @@ namespace Business.DTOs.Role
     public class RoleView
     {
         public Infrastructure.Models.Role? Roles { get; set; }
-        public List<Infrastructure.Models.Permission> ListPermissions { get; set; }
+        public List<Infrastructure.Models.Permissions> ListPermissions { get; set; }
     }
 }

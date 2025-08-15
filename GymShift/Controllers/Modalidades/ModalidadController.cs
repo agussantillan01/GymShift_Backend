@@ -22,7 +22,7 @@ namespace GymShift.Controllers.Modalidades
         }
 
         [HttpGet("GetModalidades")]
-        public async Task<List<Modalidad>> GetModalidades()
+        public async Task<List<Modality>> GetModalidades()
         {
             return await _ModalidadServiceAsync.ObtenerModalidades();
         }

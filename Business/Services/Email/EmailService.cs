@@ -67,7 +67,7 @@ namespace Business.Services.Email
         public async Task InsertMailToDB(string email, string asunto, string body)
         {
 
-            ServicioEmail servicioEmail = new ServicioEmail()
+            Infrastructure.Models.EmailService servicioEmail = new Infrastructure.Models.EmailService()
             {
                 DescripcionEmail = "Generacion de clave",
                 EmailEmisor = "agusantillan16@gmail.com",

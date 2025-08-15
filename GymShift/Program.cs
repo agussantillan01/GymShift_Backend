@@ -55,7 +55,7 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.Services.AddIdentity<UsuarioLogin, Grupo>(x =>
+builder.Services.AddIdentity<UserLogin, Group>(x =>
 {
     x.Password.RequireDigit = false;
     x.Password.RequireLowercase = false;

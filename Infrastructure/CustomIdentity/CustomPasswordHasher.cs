@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.CustomIdentity
 {
-    public class CustomPasswordHasher : IPasswordHasher<UsuarioLogin>
+    public class CustomPasswordHasher : IPasswordHasher<UserLogin>
     {
-        public string HashPassword(UsuarioLogin user, string password)
+        public string HashPassword(UserLogin user, string password)
         {
             MD5 mD5Hash = MD5.Create();
             string passHasheado;
@@ -28,7 +28,7 @@ namespace Infrastructure.CustomIdentity
             }
             return stringBuilder.ToString().ToUpper();
         }
-        public PasswordVerificationResult VerifyHashedPassword(UsuarioLogin user, string hashedPassword, string providedPassword)
+        public PasswordVerificationResult VerifyHashedPassword(UserLogin user, string hashedPassword, string providedPassword)
         {
             throw new NotImplementedException();
         }

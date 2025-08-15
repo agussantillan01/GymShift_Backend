@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class TipoEventoConfiguration : IEntityTypeConfiguration<TipoEvento>
+    public class TipoEventoConfiguration : IEntityTypeConfiguration<TypeOfClass>
     {
-        public void Configure(EntityTypeBuilder<TipoEvento> builder)
+        public void Configure(EntityTypeBuilder<TypeOfClass> builder)
         {
             builder.ToTable("TypesOfClasses");
             builder.HasKey(x => x.Id);

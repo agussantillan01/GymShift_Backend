@@ -6,10 +6,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class Definicion
+    public class Permissions
     {
         public int Id { get; set; }
-        public string Item { get; set; }
-        public string Valor { get; set; }
+        public string ClaimType { get; set; }
+        public string ClaimValue { get; set; }
     }
 }

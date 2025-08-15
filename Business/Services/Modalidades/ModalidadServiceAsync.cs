@@ -28,7 +28,7 @@ namespace Business.Services.Modalidades
         }
 
 
-        public async Task<List<Modalidad>> ObtenerModalidades()
+        public async Task<List<Modality>> ObtenerModalidades()
         {
             return await _ApplicationDbContext.Modalidades.ToListAsync();
         }

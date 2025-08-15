@@ -31,18 +31,18 @@ namespace Business.Services
         #region atributos 
         private readonly IActiveDirectoryManager _activeDirectoryManager;
         private readonly JWTSettings _jwtSetting;
-        private readonly UserManager<UsuarioLogin> _userManager;
+        private readonly UserManager<UserLogin> _userManager;
         private readonly ApplicationDbContext _ApplicationDbContext;
-        private readonly SignInManager<UsuarioLogin> _SingInManager;
+        private readonly SignInManager<UserLogin> _SingInManager;
         private readonly IServiceEmail _IserviceEmail;
         #endregion
 
         #region Constructor
         public AccountService(ApplicationDbContext ApplicationDbContext,
                                 IActiveDirectoryManager activeDirectoryManager,
-                                UserManager<UsuarioLogin> userManager,
+                                UserManager<UserLogin> userManager,
                                 IOptions<JWTSettings> jwtSetting,
-                                SignInManager<UsuarioLogin> SingInManager,
+                                SignInManager<UserLogin> SingInManager,
                                 IServiceEmail IserviceEmail
                                 )
         {
@@ -88,7 +88,7 @@ namespace Business.Services
             throw new NotImplementedException();
         }
 
-        public async Task<UsuarioLogin> GetUser(AuthenticationRequest request)
+        public async Task<UserLogin> GetUser(AuthenticationRequest request)
         {
             var user = await _userManager.FindByNameAsync(request.Usuario);
             if (user == null)
@@ -205,7 +205,7 @@ namespace Business.Services
             await ValidarRegisterUser(request, validationErrors);
 
 
-            var user = new UsuarioLogin
+            var user = new UserLogin
             {
                 Email = request.Email,
                 firstName = request.FirstName,
@@ -241,7 +241,7 @@ namespace Business.Services
             {
                 var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.Nombre.Trim().ToUpper() == rol.Trim().ToUpper());
 
-                UsuarioXRol usXrol = new UsuarioXRol()
+                UserByRole usXrol = new UserByRole()
                 {
                     IdRol = role.Id,
                     IdUsuario = newId
@@ -262,7 +262,7 @@ namespace Business.Services
             {
                 if (rol.Trim().ToUpper() == "COACH")
                 {
-                    List<TipoEvento> listEvents = new List<TipoEvento>();
+                    List<TypeOfClass> listEvents = new List<TypeOfClass>();
                     foreach (var item in actividades)
                     {
                         var Tipo = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Type.Trim().ToUpper() == item);
@@ -323,7 +323,7 @@ namespace Business.Services
         }
 
         #region metodosPrivados 
-        private async Task<JwtSecurityToken> GenerateJWToken(UsuarioLogin user)
+        private async Task<JwtSecurityToken> GenerateJWToken(UserLogin user)
         {
             string ipAddress = IpHelper.GetIpAddress();
 
@@ -353,7 +353,7 @@ namespace Business.Services
 
             return jwtSecurityToken;
         }
-        private async Task validarLogin(AuthenticationRequest request, UsuarioLogin usuario)
+        private async Task validarLogin(AuthenticationRequest request, UserLogin usuario)
         {
             if (!_activeDirectoryManager.UsaActiveDirectory(usuario.NormalizedUserName))
             {

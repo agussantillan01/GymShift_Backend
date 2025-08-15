@@ -28,7 +28,7 @@ namespace GymShift.Controllers.Login
             return Ok(await _accountService.AuthenticateAsync(request, GenerateIPAdress()));
         }
         [HttpPost("GetUsuario")]
-        public async Task<UsuarioLogin> GetUsuario(AuthenticationRequest request)
+        public async Task<UserLogin> GetUsuario(AuthenticationRequest request)
         {
             return await _accountService.GetUsuario(request);
         }

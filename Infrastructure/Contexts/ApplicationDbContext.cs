@@ -22,15 +22,15 @@ namespace Infrastructure.Contexts
         }
 
         #region DataSets
-        public DbSet<UsuarioLogin> Users { get; set; }
+        public DbSet<UserLogin> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
-        public DbSet<Permiso> Permissions { get; set; }
-        public DbSet<PermisoXRol> PermissionByRole { get; set; }
-        public DbSet<UsuarioXRol> UserByRol { get; set; }
-        public DbSet<ServicioEmail> EmailServices { get; set; }
-        public DbSet<TipoEvento> TypesClasses { get; set; }
+        public DbSet<Permission> Permissions { get; set; }
+        public DbSet<PermissionByRole> PermissionByRole { get; set; }
+        public DbSet<UserByRole> UserByRol { get; set; }
+        public DbSet<EmailService> EmailServices { get; set; }
+        public DbSet<TypeOfClass> TypesClasses { get; set; }
         public DbSet<ActivityByCoach> ActivityByCoach { get; set; }
-        public DbSet<Modalidad> Modalities { get; set; }
+        public DbSet<Modality> Modalities { get; set; }
         public DbSet<Class> Classes { get; set; }
 
         #endregion
@@ -41,7 +41,7 @@ namespace Infrastructure.Contexts
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.Entity<UsuarioXRol>(entity =>
+            modelBuilder.Entity<UserByRole>(entity =>
             {
                 entity.Property(e => e.Id)
                       .ValueGeneratedOnAdd();

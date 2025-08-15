@@ -25,17 +25,17 @@ namespace Business.Services.Actividades
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<List<TipoEvento>> GetTiposEventos()
+        public async Task<List<TypeOfClass>> GetTiposEventos()
         {
             return await _ApplicationDbContext.TiposDeEventos.ToListAsync();
         }
-        public async Task<List<TipoEvento>> ObtenerDeportesXcoach(string usernameLogueado)
+        public async Task<List<TypeOfClass>> ObtenerDeportesXcoach(string usernameLogueado)
         {
             var usuarioLogueado = await _ApplicationDbContext.Usuarios.FirstOrDefaultAsync(x => x.UserName.Trim() == usernameLogueado);
 
             if (usuarioLogueado == null)
             {
-                return new List<TipoEvento>();
+                return new List<TypeOfClass>();
             }
 
             var deportesXusuario = await _ApplicationDbContext.ActividadesXEntrenador
@@ -44,7 +44,7 @@ namespace Business.Services.Actividades
                     _ApplicationDbContext.TiposDeEventos,  
                     ae => ae.IdActividad,             
                     td => td.Id,                       
-                    (ae, td) => new TipoEvento         
+                    (ae, td) => new TypeOfClass         
                     {
                         Id = td.Id,
                         Nombre = td.Nombre

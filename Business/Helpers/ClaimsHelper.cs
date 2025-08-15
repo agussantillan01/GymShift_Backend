@@ -21,7 +21,7 @@ namespace Business.Helpers
                 allPermissions.Add(new RoleClaimsDTO { Value = fi.GetValue(null).ToString(), Type = "Permissions" });
         }
 
-        public static async Task AddPermissionClaim(this RoleManager<Grupo> roleManager, Grupo role, string permission)
+        public static async Task AddPermissionClaim(this RoleManager<Infrastructure.Models.Group> roleManager, Infrastructure.Models.Group role, string permission)
         {
             var allClaims = await roleManager.GetClaimsAsync(role);
             if (!allClaims.Any(a => a.Type == "Permission" && a.Value == permission))

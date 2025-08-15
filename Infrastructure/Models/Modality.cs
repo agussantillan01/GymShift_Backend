@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class Modalidad
+    public class Modality
     {
         public int Id { get; set; }
-        public string modalidad { get; set; }
+        public string modality { get; set; }
     }
 }

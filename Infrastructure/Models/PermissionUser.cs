@@ -7,12 +7,8 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class Grupo : IdentityRole<int>
+    public class PermissionUser : IdentityUserClaim<int>
     {
-        public Grupo() : base() { }
-        public Grupo(string roleName) : base(roleName)
-        {
-
-        }
+        public int IdPermission { get; set; }
     }
 }

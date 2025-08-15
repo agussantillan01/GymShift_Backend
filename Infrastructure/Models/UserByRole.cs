@@ -6,11 +6,10 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class PermisoXRol
+    public class UserByRole
     {
+        public int Id { get; set; }
+        public int IdUsuario { get; set; }
         public int IdRol { get; set; }
-        public Role Rol { get; set; }
-        public int IdPermiso { get; set; }
-        public Permiso Permiso { get; set; }
     }
 }
