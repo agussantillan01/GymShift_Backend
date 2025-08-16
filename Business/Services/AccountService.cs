@@ -138,7 +138,7 @@ namespace Business.Services
             var roleIds = roles.Select(r => r.Id).ToList();
 
             var permissionsDB = await _ApplicationDbContext.PermissionByRole
-                .Where(pxr => roleIds.Contains(pxr.IdRol))
+                .Where(pxr => roleIds.Contains(pxr.IdRole))
                 .Select(pxr => pxr.Permission.ClaimType)
                 .Distinct()
                 .ToArrayAsync();

@@ -14,7 +14,7 @@ namespace Infrastructure.Configuration
         public void Configure(EntityTypeBuilder<PermissionByRole> builder)
         {
             builder.ToTable("PermissionsByRole");
-            builder.HasKey(pr => new { pr.IdRol, pr.IdPermission });
+            builder.HasKey(pr => new { pr.IdRole, pr.IdPermission });
 
             //builder.HasOne(pr => pr.Rol)
                            //.WithMany(r => r.permisosXrol) // Un Rol tiene muchos PermisosXRol

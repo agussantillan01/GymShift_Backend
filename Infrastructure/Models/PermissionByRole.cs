@@ -8,7 +8,7 @@ namespace Infrastructure.Models
 {
     public class PermissionByRole
     {
-        public int IdRol { get; set; }
+        public int IdRole { get; set; }
         public Role Role { get; set; }
         public int IdPermission { get; set; }
         public Permission Permission { get; set; }

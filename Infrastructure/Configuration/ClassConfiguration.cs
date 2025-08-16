@@ -18,10 +18,10 @@ namespace Infrastructure.Configuration
             builder.Property(x => x.DateFrom).HasColumnName("hourFrom").HasColumnType("datetime").IsRequired();
             builder.Property(x => x.DateTo).HasColumnName("hourTo").HasColumnType("datetime").IsRequired();
             builder.Property(x => x.Schedule).HasColumnName("schedules").HasColumnType("Varchar").HasMaxLength(5).IsRequired();
-            builder.Property(x => x.Duration).HasColumnName("duratiom").HasColumnType("varchar").HasMaxLength(10).IsRequired();
+            builder.Property(x => x.Duration).HasColumnName("duration").HasColumnType("varchar").HasMaxLength(10).IsRequired();
             builder.Property(x => x.Days).HasColumnName("days").HasColumnType("varchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.Price).HasColumnName("price").HasColumnType("money").IsRequired();
-            builder.Property(x => x.Description).HasColumnName("descriiption").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.Description).HasColumnName("description").HasColumnType("varchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.AmountMax).HasColumnName("amountMax").HasColumnType("int").IsRequired();
             builder.Property(x => x.Amount).HasColumnName("amount").HasColumnType("int").IsRequired();
             builder.Property(x => x.idModality).HasColumnName("idModality").HasColumnType("int").IsRequired();

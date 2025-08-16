@@ -159,27 +159,37 @@ namespace Business.Services.Clases
         }
         public async Task<List<MyClassView>> CargarListaMisEventos(int idCoach, int estado)
         {
-            List<MyClassView> eventos = new List<MyClassView>();
-            var listaBase = await _ApplicationDbContext.Classes.Where(x => x.IdCoach == idCoach && x.ApplicationStatus == estado).ToListAsync();
-            foreach (Class item in listaBase)
+            try
             {
-                MyClassView evt = new MyClassView();
-                evt.Id = item.Id;
-                evt.TipoEvento = await ObtenerNombreActividad(item.idActivity);
-                evt.FechaInicio = item.DateFrom;
-                evt.FechaFin = item.DateTo;
-                evt.Horario = item.Schedule;
-                evt.Duracion = item.Duration;
-                evt.Dias = item.Days;
-                evt.Modalidad = await ObtenerNombreModalidad(item.IdModality);
-                evt.Valor = item.Price;
-                evt.Descripcion = item.Description;
-                evt.CupoMaximo = item.AmountMax;
-                evt.CupoActual = item.Amount;
-                evt.Profesor = await ObtenerNombreApeXCoach(item.IdCoach);
-                eventos.Add(evt);
+                List<MyClassView> eventos = new List<MyClassView>();
+                var listaBase = await _ApplicationDbContext.Classes.Where(x => x.IdCoach == idCoach && x.ApplicationStatus == estado).ToListAsync();
+                foreach (Class item in listaBase)
+                {
+                    MyClassView evt = new MyClassView();
+                    evt.Id = item.Id;
+                    evt.TipoEvento = await ObtenerNombreActividad(item.idActivity);
+                    evt.FechaInicio = item.DateFrom;
+                    evt.FechaFin = item.DateTo;
+                    evt.Horario = item.Schedule;
+                    evt.Duracion = item.Duration;
+                    evt.Dias = item.Days;
+                    evt.Modalidad = await ObtenerNombreModalidad(item.IdModality);
+                    evt.Valor = item.Price;
+                    evt.Descripcion = item.Description;
+                    evt.CupoMaximo = item.AmountMax;
+                    evt.CupoActual = item.Amount;
+                    evt.Profesor = await ObtenerNombreApeXCoach(item.IdCoach);
+                    eventos.Add(evt);
+                }
+                return eventos;
             }
-            return eventos;
+            catch (Exception ex)
+            {
+
+                throw ex;
+            }
+
+           
         }
 
 
