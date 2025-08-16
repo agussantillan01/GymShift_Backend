@@ -16,7 +16,7 @@ namespace Infrastructure.Configuration
             builder.ToTable("Activities");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.activity).HasColumnName("type").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.activity).HasColumnName("activity").HasColumnType("varchar").HasMaxLength(500).IsRequired();
 
 
         }

@@ -27,7 +27,7 @@ namespace Business.Services.Actividades
 
         public async Task<List<Activity>> GetTiposEventos()
         {
-            return await _ApplicationDbContext.TypesClasses.ToListAsync();
+            return await _ApplicationDbContext.Activities.ToListAsync();
         }
         public async Task<List<Activity>> ObtenerDeportesXcoach(string usernameLogueado)
         {
@@ -41,7 +41,7 @@ namespace Business.Services.Actividades
             var deportesXusuario = await _ApplicationDbContext.ActivityByCoach
                 .Where(ae => ae.IdUser == usuarioLogueado.Id) 
                 .Join(
-                    _ApplicationDbContext.TypesClasses,  
+                    _ApplicationDbContext.Activities,  
                     ae => ae.IdActivity,             
                     td => td.Id,                       
                     (ae, td) => new Activity         

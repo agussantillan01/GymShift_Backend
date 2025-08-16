@@ -241,7 +241,7 @@ namespace Business.Services
             {
                 var role = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.role.Trim().ToUpper() == rol.Trim().ToUpper());
 
-                UserByRole usXrol = new UserByRole()
+                UserRole usXrol = new UserRole()
                 {
                     IdRole = role.Id,
                     IdUser = newId
@@ -265,7 +265,7 @@ namespace Business.Services
                     List<Activity> listEvents = new List<Activity>();
                     foreach (var item in actividades)
                     {
-                        var Tipo = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.activity.Trim().ToUpper() == item);
+                        var Tipo = await _ApplicationDbContext.Activities.FirstOrDefaultAsync(x => x.activity.Trim().ToUpper() == item);
                         listEvents.Add(Tipo);
                     }
                     List<ActivityByCoach> listaAInsertar = new List<ActivityByCoach>();

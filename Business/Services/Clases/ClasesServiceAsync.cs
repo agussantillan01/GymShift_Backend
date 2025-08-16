@@ -237,7 +237,7 @@ namespace Business.Services.Clases
         }
         private async Task<string> ObtenerNombreActividad(int idActividad)
         {
-            return (await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == idActividad)).activity;
+            return (await _ApplicationDbContext.Activities.FirstOrDefaultAsync(x => x.Id == idActividad)).activity;
         }
     }
 }

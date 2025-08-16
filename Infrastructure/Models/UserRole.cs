@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class UserByRole
+    public class UserRole
     {
         public int Id { get; set; }
         public int IdUser { get; set; }

@@ -131,7 +131,7 @@ namespace Business.Services.Usuarios
             List<string> actividades = new List<string>();
             foreach (var item in actXEntrenador)
             {
-                var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == item.IdActivity);
+                var objActividad = await _ApplicationDbContext.Activities.FirstOrDefaultAsync(x => x.Id == item.IdActivity);
                 actividades.Add(objActividad.activity);
             }
             return actividades;
@@ -215,7 +215,7 @@ namespace Business.Services.Usuarios
         {
             var rol = await _ApplicationDbContext.Roles.FirstOrDefaultAsync(x => x.role.ToLower().Trim() == nombreRol.ToLower().Trim());
 
-            UserByRole usXrol = new UserByRole();
+            UserRole usXrol = new UserRole();
             usXrol.IdUser = idUsuario;
             usXrol.IdRole = rol.Id;
             await _ApplicationDbContext.UserByRol.AddAsync(usXrol);
@@ -226,7 +226,7 @@ namespace Business.Services.Usuarios
             List<ActivityByCoach> listInsert = new List<ActivityByCoach>();
             foreach (var item in actividades)
             {
-                var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.activity.Trim().ToUpper() == item.Trim().ToUpper());
+                var objActividad = await _ApplicationDbContext.Activities.FirstOrDefaultAsync(x => x.activity.Trim().ToUpper() == item.Trim().ToUpper());
                 ActivityByCoach actXEntrenador = new ActivityByCoach();
                 actXEntrenador.IdUser = idUsuario;
                 actXEntrenador.IdActivity = objActividad.Id;

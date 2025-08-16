@@ -9,11 +9,11 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class UserByRoleConfiguration : IEntityTypeConfiguration<UserByRole>
+    public class UserRoleConfiguration : IEntityTypeConfiguration<UserRole>
     {
-        public void Configure(EntityTypeBuilder<UserByRole> builder)
+        public void Configure(EntityTypeBuilder<UserRole> builder)
         {
-            builder.ToTable("UserByRole");
+            builder.ToTable("UserRole");
             builder.HasKey(pr => new { pr.IdRole, pr.IdUser });
 
         }
