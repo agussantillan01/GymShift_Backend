@@ -42,7 +42,7 @@ namespace Business.Services.Clases
                 await Validar(Actividad, validationErrors);
 
                 Class evento = new Class();
-                evento.idTypeClass = Actividad.Actividad;
+                evento.idActivity = Actividad.Actividad;
                 evento.DateFrom = Actividad.FechaInicio;
                 evento.DateTo = Actividad.FechaFin;
                 evento.Schedule = Actividad.Horario.Trim();
@@ -93,7 +93,7 @@ namespace Business.Services.Clases
             try
             {
                 var evento = await _ApplicationDbContext.Classes.FirstOrDefaultAsync(x => x.Id == Actividad.Id);
-                evento.idTypeClass = Actividad.Actividad;
+                evento.idActivity = Actividad.Actividad;
                 evento.DateFrom = Actividad.FechaInicio;
                 evento.DateTo = Actividad.FechaFin;
                 evento.Schedule = Actividad.Horario.Trim();
@@ -165,7 +165,7 @@ namespace Business.Services.Clases
             {
                 MyClassView evt = new MyClassView();
                 evt.Id = item.Id;
-                evt.TipoEvento = await ObtenerNombreActividad(item.idTypeClass);
+                evt.TipoEvento = await ObtenerNombreActividad(item.idActivity);
                 evt.FechaInicio = item.DateFrom;
                 evt.FechaFin = item.DateTo;
                 evt.Horario = item.Schedule;
@@ -200,7 +200,7 @@ namespace Business.Services.Clases
             {
                 MyClassView evt = new MyClassView();
                 evt.Id = item.Id;
-                evt.TipoEvento = await ObtenerNombreActividad(item.idTypeClass);
+                evt.TipoEvento = await ObtenerNombreActividad(item.idActivity);
                 evt.FechaInicio = item.DateFrom;
                 evt.FechaFin = item.DateTo;
                 evt.Horario = item.Schedule;
@@ -227,7 +227,7 @@ namespace Business.Services.Clases
         }
         private async Task<string> ObtenerNombreActividad(int idActividad)
         {
-            return (await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == idActividad)).Type;
+            return (await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == idActividad)).activity;
         }
     }
 }

@@ -9,14 +9,14 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Configuration
 {
-    public class TipoEventoConfiguration : IEntityTypeConfiguration<TypeOfClass>
+    public class ActivityConfiguration : IEntityTypeConfiguration<Activity>
     {
-        public void Configure(EntityTypeBuilder<TypeOfClass> builder)
+        public void Configure(EntityTypeBuilder<Activity> builder)
         {
-            builder.ToTable("TypesOfClasses");
+            builder.ToTable("Activities");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.Type).HasColumnName("type").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.activity).HasColumnName("type").HasColumnType("varchar").HasMaxLength(500).IsRequired();
 
 
         }

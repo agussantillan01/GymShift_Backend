@@ -132,7 +132,7 @@ namespace Business.Services.Usuarios
             foreach (var item in actXEntrenador)
             {
                 var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Id == item.IdActivity);
-                actividades.Add(objActividad.Type);
+                actividades.Add(objActividad.activity);
             }
             return actividades;
         }
@@ -226,7 +226,7 @@ namespace Business.Services.Usuarios
             List<ActivityByCoach> listInsert = new List<ActivityByCoach>();
             foreach (var item in actividades)
             {
-                var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Type.Trim().ToUpper() == item.Trim().ToUpper());
+                var objActividad = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.activity.Trim().ToUpper() == item.Trim().ToUpper());
                 ActivityByCoach actXEntrenador = new ActivityByCoach();
                 actXEntrenador.IdUser = idUsuario;
                 actXEntrenador.IdActivity = objActividad.Id;

@@ -16,13 +16,13 @@ namespace Infrastructure.Configuration
             builder.ToTable("EmailService");
             builder.HasKey(e => e.Id);
 
-            builder.Property(e => e.Id).HasColumnName("ID").ValueGeneratedOnAdd();
-            builder.Property(e => e.EmailDescription).HasColumnName("DESCRIPCIONEMAIL").HasMaxLength(500).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.emailSender).HasColumnName("EMAILEMISOR").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.EmailReceptor).HasColumnName("EMAILRECEPTOR").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.Subject).HasColumnName("ASUNTO").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.Body).HasColumnName("CUERPO").HasMaxLength(250).IsUnicode(true).IsRequired(false);
-            builder.Property(e => e.DateSent).HasColumnName("FECHAENVIO").IsRequired();
+            builder.Property(e => e.Id).HasColumnName("id").ValueGeneratedOnAdd();
+            builder.Property(e => e.EmailDescription).HasColumnName("emailDescription").HasMaxLength(500).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.emailSender).HasColumnName("emailSender").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.EmailReceptor).HasColumnName("emailReceptor").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.Subject).HasColumnName("Subject").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.Body).HasColumnName("body").HasMaxLength(250).IsUnicode(true).IsRequired(false);
+            builder.Property(e => e.DateSent).HasColumnName("dateSent").IsRequired();
 
         }
     }

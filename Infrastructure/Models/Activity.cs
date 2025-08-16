@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace Infrastructure.Models
 {
-    public class TypeOfClass
+    public class Activity
     {
         public int Id { get; set; }
-        public string Type { get; set; }
+        public string activity { get; set; }
     }
 }

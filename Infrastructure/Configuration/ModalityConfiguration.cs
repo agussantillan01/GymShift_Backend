@@ -16,7 +16,7 @@ namespace Infrastructure.Configuration
             builder.ToTable("Modalities");
             builder.HasKey(x => x.Id);
 
-            builder.Property(x => x.modality).HasColumnName("MODALIDAD").HasColumnType("varchar").HasMaxLength(500).IsRequired();
+            builder.Property(x => x.modality).HasColumnName("modality").HasColumnType("varchar").HasMaxLength(500).IsRequired();
         }
     }
 }

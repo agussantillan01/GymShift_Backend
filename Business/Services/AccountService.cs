@@ -262,10 +262,10 @@ namespace Business.Services
             {
                 if (rol.Trim().ToUpper() == "COACH")
                 {
-                    List<TypeOfClass> listEvents = new List<TypeOfClass>();
+                    List<Activity> listEvents = new List<Activity>();
                     foreach (var item in actividades)
                     {
-                        var Tipo = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.Type.Trim().ToUpper() == item);
+                        var Tipo = await _ApplicationDbContext.TypesClasses.FirstOrDefaultAsync(x => x.activity.Trim().ToUpper() == item);
                         listEvents.Add(Tipo);
                     }
                     List<ActivityByCoach> listaAInsertar = new List<ActivityByCoach>();

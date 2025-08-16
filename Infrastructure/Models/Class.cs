@@ -9,7 +9,6 @@ namespace Infrastructure.Models
     public class Class
     {
         public int Id { get; set; }
-        public int idTypeClass { get; set; }
         public DateTime DateFrom { get; set; }
         public DateTime DateTo { get; set; }
         public string Schedule { get; set; }
@@ -20,6 +19,8 @@ namespace Infrastructure.Models
         public string Description { get; set; }
         public int AmountMax { get; set; }
         public int Amount { get; set; }
+        public int idActivity { get; set; }
+        public int idModality { get; set; }
         public int IdCoach { get; set; }
         public int ApplicationStatus { get; set; }
     }

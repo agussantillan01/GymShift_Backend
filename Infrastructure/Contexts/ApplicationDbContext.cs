@@ -28,7 +28,7 @@ namespace Infrastructure.Contexts
         public DbSet<PermissionByRole> PermissionByRole { get; set; }
         public DbSet<UserByRole> UserByRol { get; set; }
         public DbSet<EmailService> EmailServices { get; set; }
-        public DbSet<TypeOfClass> TypesClasses { get; set; }
+        public DbSet<Activity> TypesClasses { get; set; }
         public DbSet<ActivityByCoach> ActivityByCoach { get; set; }
         public DbSet<Modality> Modalities { get; set; }
         public DbSet<Class> Classes { get; set; }
@@ -54,7 +54,7 @@ namespace Infrastructure.Contexts
             modelBuilder.ApplyConfiguration(new PermissioByRoleConfiguration());
             modelBuilder.ApplyConfiguration(new UserByRoleConfiguration());
             modelBuilder.ApplyConfiguration(new EmailServiceConfiguration());
-            modelBuilder.ApplyConfiguration(new TipoEventoConfiguration());
+            modelBuilder.ApplyConfiguration(new ActivityConfiguration());
             modelBuilder.ApplyConfiguration(new ActivitiesByCoach());
             modelBuilder.ApplyConfiguration(new ClassConfiguration());
             modelBuilder.ApplyConfiguration(new ModalityConfiguration());
