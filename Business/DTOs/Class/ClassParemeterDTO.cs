@@ -9,16 +9,16 @@ namespace Business.DTOs.Clase
     public class ClassParemeterDTO
     {
         public int? Id { get; set; }
-        public string Modalidad { get; set; }
-        public DateTime FechaInicio { get; set; }
-        public DateTime FechaFin { get; set; }
-        public string Horario { get; set; }
-        public string Duracion { get; set; }
-        public int Actividad { get; set; }
-        public int CupoMaximo { get; set; }
-        public string Descripcion { get; set; } 
-        public List<string> Dias { get; set; }
-        public string Valor { get; set; }
+        public string modality { get; set; }
+        public DateTime DateFrom { get; set; }
+        public DateTime DateTo { get; set; }
+        public string Hour { get; set; }
+        public string Duration { get; set; }
+        public string Activity { get; set; }
+        public int AmountMax { get; set; }
+        public string Description { get; set; } 
+        public List<string> Days { get; set; }
+        public string Price { get; set; }
     }
 
 }

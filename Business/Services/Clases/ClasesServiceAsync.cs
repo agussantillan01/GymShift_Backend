@@ -32,31 +32,31 @@ namespace Business.Services.Clases
             _ApplicationDbContext = ApplicationDbContext;
         }
 
-        public async Task<string> Insert(ClassParemeterDTO Actividad, string user)
+        public async Task<string> Insert(ClassParemeterDTO clase, string user)
         {
             try
             {
                 var usuarioLogueado = await _ApplicationDbContext.Users.FirstOrDefaultAsync(x => x.UserName.Trim() == user);
                 if (usuarioLogueado == null) throw new ApiException($"Ocurrió con tus creedenciales. Por favor Comuníquese.");
                 var validationErrors = new List<string>();
-                await Validar(Actividad, validationErrors);
+                await Validar(clase, validationErrors);
 
                 Class evento = new Class();
-                evento.idActivity = Actividad.Actividad;
-                evento.DateFrom = Actividad.FechaInicio;
-                evento.DateTo = Actividad.FechaFin;
-                evento.Schedule = Actividad.Horario.Trim();
-                evento.Duration = Actividad.Duracion.Trim();
-                evento.Days = string.Join(";", Actividad.Dias);
-                evento.IdModality = int.Parse(Actividad.Modalidad);
-                evento.Price = Convert.ToDecimal(Actividad.Valor);
-                evento.Description = Actividad.Descripcion;
-                evento.AmountMax = Actividad.CupoMaximo;
+                evento.idActivity = int.Parse(clase.Activity);
+                evento.DateFrom = clase.DateFrom;
+                evento.DateTo = clase.DateTo;
+                evento.Schedule = clase.Hour.Trim();
+                evento.Duration = clase.Duration.Trim();
+                evento.Days = string.Join(";", clase.Days);
+                evento.IdModality = int.Parse(clase.modality);
+                evento.Price = Convert.ToDecimal(clase.Price);
+                evento.Description = clase.Description;
+                evento.AmountMax = clase.AmountMax;
                 evento.Amount = 0;
                 evento.IdCoach = usuarioLogueado.Id;
                 evento.ApplicationStatus = (int)ApplicationStatusEnum.PENDIENTE_APROBACION;
 
-                await _ApplicationDbContext.AddAsync(evento);
+                await _ApplicationDbContext.Classes.AddAsync(evento);
                 await _ApplicationDbContext.SaveChangesAsync();
 
                 return "";
@@ -93,16 +93,16 @@ namespace Business.Services.Clases
             try
             {
                 var evento = await _ApplicationDbContext.Classes.FirstOrDefaultAsync(x => x.Id == Actividad.Id);
-                evento.idActivity = Actividad.Actividad;
-                evento.DateFrom = Actividad.FechaInicio;
-                evento.DateTo = Actividad.FechaFin;
-                evento.Schedule = Actividad.Horario.Trim();
-                evento.Duration = Actividad.Duracion.Trim();
-                evento.Days = string.Join(";", Actividad.Dias);
-                evento.IdModality = int.Parse(Actividad.Modalidad);
-                evento.Price = Convert.ToDecimal(Actividad.Valor);
-                evento.Description = Actividad.Descripcion;
-                evento.AmountMax = Actividad.CupoMaximo;
+                evento.idActivity = int.Parse(Actividad.Activity);
+                evento.DateFrom = Actividad.DateFrom;
+                evento.DateTo = Actividad.DateTo;
+                evento.Schedule = Actividad.Hour.Trim();
+                evento.Duration = Actividad.Duration.Trim();
+                evento.Days = string.Join(";", Actividad.Days);
+                evento.IdModality = int.Parse(Actividad.modality);
+                evento.Price = Convert.ToDecimal(Actividad.Price);
+                evento.Description = Actividad.Description;
+                evento.AmountMax = Actividad.AmountMax;
                 evento.Amount = 0;
 
                 _ApplicationDbContext.Update(evento);
@@ -121,30 +121,38 @@ namespace Business.Services.Clases
         }
         public async Task Validar(ClassParemeterDTO Actividad, List<string> validations)
         {
-            if (Actividad.Dias == null || Actividad.Dias.Count == 0)
+            if (Actividad.Days == null || Actividad.Days.Count == 0)
             {
                 validations.Add("Debe ingresar al menos un día.");
             }
-            if (Actividad.FechaInicio == null)
+            if (Actividad.DateFrom == null)
             {
                 validations.Add("Debe ingresar una fecha de Inicio.");
             }
-            if (Actividad.FechaFin == null)
+            if (Actividad.DateTo == null)
             {
                 validations.Add("Debe ingresar una fecha de Fin.");
             }
-            if (Actividad.CupoMaximo == null || Actividad.CupoMaximo == 0)
+            if (Actividad.Activity == null)
+            {
+                validations.Add("Debe ingresar una Actividd.");
+            }
+            if (Actividad.modality == null)
+            {
+                validations.Add("Debe ingresar una Modalidad.");
+            }
+            if (Actividad.AmountMax == null || Actividad.AmountMax == 0)
             {
                 validations.Add("Debe ingresar un cupo maximo.");
             }
-            if (Actividad.Duracion == null || int.Parse(Actividad.Duracion) == 0)
+            if (Actividad.Duration == null || int.Parse(Actividad.Duration) == 0)
             {
                 validations.Add("Debe ingresar una Duracion.");
             }
-            if (Actividad.FechaInicio > Actividad.FechaFin)
+            if (Actividad.DateFrom > Actividad.DateTo)
             {
                 validations.Add("La fecha de inicio debe ser mayor a la fecha de hoy");
-            }
+            } 
 
             if (validations.Count > 0)
             {

@@ -24,9 +24,9 @@ namespace Infrastructure.Configuration
             builder.Property(x => x.Description).HasColumnName("description").HasColumnType("varchar").HasMaxLength(500).IsRequired();
             builder.Property(x => x.AmountMax).HasColumnName("amountMax").HasColumnType("int").IsRequired();
             builder.Property(x => x.Amount).HasColumnName("amount").HasColumnType("int").IsRequired();
-            builder.Property(x => x.idModality).HasColumnName("idModality").HasColumnType("int").IsRequired();
+            builder.Property(x => x.IdModality).HasColumnName("idModality").HasColumnType("int").IsRequired();
             builder.Property(x => x.IdCoach).HasColumnName("idUser").HasColumnType("int").IsRequired();
-            builder.Property(x => x.ApplicationStatus).HasColumnName("idApplicationStatus").HasColumnType("varchar").HasMaxLength(100);
+            builder.Property(x => x.ApplicationStatus).HasColumnName("idApplicationStatus").HasColumnType("int").HasMaxLength(100);
             builder.Property(x => x.idActivity).HasColumnName("idActivity").HasColumnType("int").IsRequired();
 
         }

@@ -20,7 +20,6 @@ namespace Infrastructure.Models
         public int AmountMax { get; set; }
         public int Amount { get; set; }
         public int idActivity { get; set; }
-        public int idModality { get; set; }
         public int IdCoach { get; set; }
         public int ApplicationStatus { get; set; }
     }
