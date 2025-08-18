@@ -9,9 +9,9 @@ namespace Business.DTOs.Usuarios
     public class UserView
     {
         public int Id { get; set; }
-        public string Nombre { get; set; }
-        public string Apellido { get; set; }
-        public string Email { get; set; }
-        public string Rol { get; set; }
+        public string firstName { get; set; }
+        public string lastName { get; set; }
+        public string email { get; set; }
+        public string role { get; set; }
     }
 }

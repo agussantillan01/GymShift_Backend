@@ -66,10 +66,10 @@ namespace Business.Services.Usuarios
             var lista = listUsers.Select(item => new UserView()
             {
                 Id = item.Id,
-                Nombre = item.FirstName,
-                Apellido = item.LastName,
-                Email = item.Email ?? "No Contiene",
-                Rol = obtenerRol(item.Id)
+                firstName = item.FirstName,
+                lastName = item.LastName,
+                email = item.Email ?? "No Contiene",
+                role = obtenerRol(item.Id)
             }).ToList();
             return lista;
         }
